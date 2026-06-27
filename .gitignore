@@ -1,0 +1,42 @@
+# gradle
+
+.gradle/
+build/
+out/
+classes/
+gradle/wrapper/gradle-wrapper.jar
+
+# fabric & architectury
+
+run/
+.architectury-transformer/debug.log
+
+# idea
+
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# eclipse
+
+.classpath
+.project
+.settings/
+*.launch
+
+# vscode
+
+.vscode/
+
+# java
+
+bin/
+*.hprof
+*.jfr
+hs_err_*.log
+replay_*.log
+
+# macos
+
+*.DS_Store

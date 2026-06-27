@@ -1,0 +1,46 @@
+pluginManagement {
+    repositories {
+        maven { url = 'https://maven.fabricmc.net/' }
+        maven { url = 'https://maven.architectury.dev/' }
+        maven { url = 'https://files.minecraftforge.net/maven/' }
+        maven { url = 'https://maven.neoforged.net/releases' }
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = providers.gradleProperty('archives_name').get()
+
+include 'common'
+
+def targetMinecraftStr = providers.gradleProperty('target_minecraft_version').get()
+
+def versionFile = new File("versions/${targetMinecraftStr}.properties")
+if (!versionFile.exists()) {
+    throw new GradleException("Minecraft version profile configuration not found: ${versionFile.absolutePath}")
+}
+
+def versionProps = new Properties()
+versionFile.withInputStream { stream -> versionProps.load(stream) }
+
+versionProps.each { key, value ->
+    gradle.ext[key] = value
+}
+
+def platformsProp = providers.gradleProperty('enabled_platforms').get()
+def enabledPlatforms = platformsProp.split(',').collect { it.trim().toLowerCase() }
+
+def supportedPlatformsProp = gradle.ext['supported_loaders']
+def supportedPlatforms = supportedPlatformsProp.split(',').collect { it.trim().toLowerCase() }
+
+def activePlatforms = enabledPlatforms.intersect(supportedPlatforms)
+gradle.ext['active_platforms'] = activePlatforms
+
+if (activePlatforms.contains('fabric')) {
+    include 'fabric'
+}
+if (activePlatforms.contains('forge')) {
+    include 'forge'
+}
+if (activePlatforms.contains('neoforge')) {
+    include 'neoforge'
+}

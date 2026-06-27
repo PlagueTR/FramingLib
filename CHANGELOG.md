@@ -1,0 +1,1 @@
+- Support for Minecraft 26.2

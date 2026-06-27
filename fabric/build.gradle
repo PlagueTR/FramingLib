@@ -1,0 +1,224 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.commonmark:commonmark:0.29.0'
+        classpath 'org.commonmark:commonmark-ext-gfm-tables:0.29.0'
+        classpath 'org.commonmark:commonmark-ext-gfm-strikethrough:0.29.0'
+        classpath 'org.commonmark:commonmark-ext-gfm-alerts:0.29.0'
+    }
+}
+
+if (rootProject.architectury_loom_id != 'dev.architectury.loom-no-remap') {
+    apply plugin: 'com.gradleup.shadow'
+}
+apply plugin: 'com.modrinth.minotaur'
+apply plugin: 'net.darkhax.curseforgegradle'
+
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+
+loom{
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+}
+
+configurations {
+    if (rootProject.architectury_loom_id == 'dev.architectury.loom-no-remap') {
+        common
+        shadowCommon
+    }
+    else {
+        common {
+            canBeResolved = true
+            canBeConsumed = false
+        }
+    }
+
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+
+    if (rootProject.architectury_loom_id != 'dev.architectury.loom-no-remap') {
+        shadowBundle {
+            canBeResolved = true
+            canBeConsumed = false
+        }
+    }
+}
+
+repositories {
+    maven { url = "https://maven.terraformersmc.com" }
+}
+
+dependencies {
+    if (rootProject.architectury_loom_id == 'dev.architectury.loom-no-remap') {
+        api "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+
+        implementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
+
+        implementation("me.shedaniel.cloth:cloth-config-fabric:${rootProject.common_cloth_config_version}") {
+            exclude module: "fabric-api"
+        }
+
+        implementation("com.terraformersmc:modmenu:${rootProject.fabric_mod_menu_version}") {
+            exclude module: "fabric-api"
+            transitive = false
+        }
+
+        common(project(path: ':common')) { transitive = false }
+        shadowCommon(project(path: ':common', configuration: "transformProductionFabric")) { transitive = false }
+    }
+    else {
+        modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+
+        modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
+
+        modImplementation("me.shedaniel.cloth:cloth-config-fabric:${rootProject.common_cloth_config_version}") {
+            exclude module: "fabric-api"
+        }
+
+        modImplementation("com.terraformersmc:modmenu:${rootProject.fabric_mod_menu_version}") {
+            exclude module: "fabric-api"
+            transitive = false
+        }
+
+        common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
+        shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
+    }
+}
+
+processResources {
+    from(project(":common").file("src/main/resources/${rootProject.archives_name}.accesswidener"))
+
+    inputs.property 'mod_id', rootProject.archives_name
+    inputs.property 'mod_version', rootProject.mod_version
+    inputs.property 'mod_name', rootProject.mod_name
+    inputs.property 'mod_desc', rootProject.mod_description
+    inputs.property 'mod_author', rootProject.mod_author
+    inputs.property 'mod_sources', rootProject.mod_sources
+    inputs.property 'mod_license', rootProject.mod_license
+    inputs.property 'fabric_loader_version', rootProject.fabric_loader_version
+    inputs.property 'minecraft_version', rootProject.minecraft_version
+    inputs.property 'java_version', rootProject.minecraft_java_version
+    inputs.property 'mod_menu_version', rootProject.fabric_mod_menu_version
+
+    filesMatching('fabric.mod.json') {
+        expand([
+            'mod_id': inputs.properties.mod_id,
+            'mod_version': inputs.properties.mod_version,
+            'mod_name': inputs.properties.mod_name,
+            'mod_desc': inputs.properties.mod_desc,
+            'mod_author': inputs.properties.mod_author,
+            'mod_sources': inputs.properties.mod_sources,
+            'mod_license': inputs.properties.mod_license,
+            'fabric_loader_version': inputs.properties.fabric_loader_version,
+            'minecraft_version': inputs.properties.minecraft_version,
+            'java_version': inputs.properties.java_version,
+            'mod_menu_version': inputs.properties.mod_menu_version
+        ])
+    }
+}
+
+if (rootProject.architectury_loom_id == 'dev.architectury.loom-no-remap') {
+    jar {
+        archiveClassifier = "raw"
+    }
+
+    java {
+        withSourcesJar()
+    }
+
+    shadowJar {
+        dependsOn(jar)
+        mainSpec.sourcePaths.clear()
+        from(zipTree(jar.archiveFile))
+
+        configurations = [project.configurations.shadowCommon]
+        archiveClassifier = null
+    }
+
+    configurations {
+        apiElements {
+            outgoing.artifacts.clear()
+            outgoing.artifact(shadowJar)
+        }
+    }
+}
+else {
+    shadowJar {
+        configurations = [project.configurations.shadowBundle]
+        archiveClassifier = 'dev-shadow'
+    }
+
+    remapJar {
+        inputFile.set shadowJar.archiveFile
+    }
+}
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = "${rootProject.modrinth_name}"
+    versionNumber = "${rootProject.mod_version}+${rootProject.minecraft_version}-Fabric"
+
+    def targetTaskName = (rootProject.architectury_loom_id == 'dev.architectury.loom-no-remap') ? 'shadowJar' : 'remapJar'
+    def targetJarTask = project.tasks.named(targetTaskName)
+
+    uploadFile = targetJarTask
+    tasks.named("modrinth").configure {
+        dependsOn(targetJarTask)
+    }
+
+    gameVersions = ["${rootProject.minecraft_version}"]
+    loaders = ["fabric", "quilt"]
+    dependencies {
+        optional.project("modmenu")
+        optional.project("cloth-config")
+        // add dependencies here
+    }
+    changelog = rootProject.file("CHANGELOG.md").text
+}
+
+tasks.named('modrinthSyncBody') {
+    group = null
+}
+
+tasks.register('curseForge', net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+    group "publishing"
+
+    apiToken = System.getenv("CURSEFORGE_TOKEN")
+
+    def extensions = [
+            org.commonmark.ext.gfm.tables.TablesExtension.create(),
+            org.commonmark.ext.gfm.strikethrough.StrikethroughExtension.create(),
+            org.commonmark.ext.gfm.alerts.AlertsExtension.create()
+    ]
+
+    def parser = org.commonmark.parser.Parser.builder().extensions(extensions).build()
+    def renderer = org.commonmark.renderer.markdown.MarkdownRenderer.builder().extensions(extensions).build()
+    def document = parser.parse(rootProject.file("CHANGELOG.md").text)
+    def markdown = renderer.render(document)
+
+    def targetTaskNName = (rootProject.architectury_loom_id == 'dev.architectury.loom-no-remap') ? 'shadowJar' : 'remapJar'
+    def targetJarTask = project.tasks.named(targetTaskName)
+
+    def mainFile = upload("${rootProject.curseforge_id}" as Integer, targetJarTask)
+    dependsOn(targetJarTask)
+
+    mainFile.displayName = "${rootProject.mod_version}+${rootProject.minecraft_version}-Fabric"
+    mainFile.changelog = markdown
+    mainFile.changelogType = "markdown"
+    mainFile.releaseType = net.darkhax.curseforgegradle.Constants.RELEASE_TYPE_RELEASE
+    mainFile.addGameVersion("${rootProject.minecraft_version}")
+    mainFile.addModLoader("Fabric")
+    mainFile.addModLoader("Quilt")
+
+    // environment
+    mainFile.addEnvironment("Server")
+
+    mainFile.addOptional("modmenu")
+    mainFile.addOptional("cloth-config")
+    // add dependencies here
+}
