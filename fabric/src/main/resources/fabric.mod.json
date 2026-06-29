@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "${mod_id}",
   "version": "${mod_version}",
-  "accessWidener": "example_mod.accesswidener",
+  "accessWidener": "framinglib.accesswidener",
   "name": "${mod_name}",
   "description": "${mod_desc}",
   "authors": [
@@ -12,18 +12,18 @@
     "sources": "${mod_sources}"
   },
   "license": "${mod_license}",
-  "icon": "assets/example_mod/icon.png",
+  "icon": "assets/framinglib/icon.png",
   "environment": "client",
   "entrypoints": {
     "main": [
-      "com.example.example_mod.fabric.MainFabric"
+      "space.plague.framinglib.fabric.MainFabric"
     ],
     "modmenu": [
-      "com.example.example_mod.fabric.config.gui.ModMenuIntegration"
+      "space.plague.framinglib.fabric.config.gui.ModMenuIntegration"
     ]
   },
   "mixins": [
-    "example_mod.mixins.json"
+    "framinglib.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",

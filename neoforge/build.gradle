@@ -57,15 +57,11 @@ dependencies {
     if (rootProject.architectury_loom_id == 'dev.architectury.loom-no-remap') {
         neoForge "net.neoforged:neoforge:$rootProject.neoforge_version"
 
-        implementation("me.shedaniel.cloth:cloth-config-neoforge:${rootProject.common_cloth_config_version}")
-
         common(project(path: ':common')) { transitive = false }
         shadowCommon(project(path: ':common', configuration: "transformProductionNeoForge")) { transitive = false }
     }
     else {
         neoForge "net.neoforged:neoforge:$rootProject.neoforge_version"
-
-        modImplementation("me.shedaniel.cloth:cloth-config-neoforge:${rootProject.common_cloth_config_version}")
 
         common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
         shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
@@ -193,8 +189,6 @@ modrinth {
     gameVersions = ["${rootProject.minecraft_version}"]
     loaders = ["neoforge"]
     dependencies {
-        optional.project("cloth-config")
-        // add dependencies here
     }
     changelog = rootProject.file("CHANGELOG.md").text
 }
@@ -232,9 +226,5 @@ tasks.register('curseForge', net.darkhax.curseforgegradle.TaskPublishCurseForge)
     mainFile.addGameVersion("${rootProject.minecraft_version}")
     mainFile.addModLoader("NeoForge")
 
-    // environment
-    mainFile.addEnvironment("Server")
-
-    mainFile.addOptional("cloth-config")
-    // add dependencies here
+    mainFile.addEnvironment("Client")
 }

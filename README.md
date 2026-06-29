@@ -1,3 +1,4 @@
-# Architectury Template
+# Framing Lib
 
-A template to develop Minecraft mods using Architectury
+A lightweight, client-sided configuration library for creating interactive, draggable HUD layout screens
+
