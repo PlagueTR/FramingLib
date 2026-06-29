@@ -3,7 +3,7 @@ loaderVersion = "${neoforge_loader_version}"
 license = "${mod_license}"
 
 [[mods]]
-modId = "example_mod"
+modId = "framinglib"
 version = "${mod_version}"
 displayName = "${mod_name}"
 authors = "${mod_author}"
@@ -12,14 +12,14 @@ ${mod_desc}
 '''
 logoFile = "icon.png"
 
-[[dependencies.example_mod]]
+[[dependencies.framinglib]]
 modId = "neoforge"
 type = "required"
 versionRange = "${neoforge_loader_version}"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.example_mod]]
+[[dependencies.framinglib]]
 modId = "minecraft"
 type = "required"
 versionRange = "[${minecraft_version}]"
@@ -27,4 +27,4 @@ ordering = "NONE"
 side = "BOTH"
 
 [[mixins]]
-config = "example_mod.mixins.json"
+config = "framinglib.mixins.json"

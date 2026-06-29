@@ -1,0 +1,493 @@
+package space.plague.framinglib.gui.elements.layoutelement;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import space.plague.framinglib.api.LayoutElement;
+import space.plague.framinglib.api.util.AlignmentSizeOffset;
+import space.plague.framinglib.api.util.Alignments;
+import space.plague.framinglib.api.util.Color;
+import space.plague.framinglib.api.util.TextureInfo;
+import space.plague.framinglib.gui.FramingLayoutConfigScreen;
+import space.plague.framinglib.util.ButtonTextureHolder;
+import space.plague.framinglib.util.MathUtils;
+import space.plague.framinglib.util.PositioningHelper;
+import space.plague.framinglib.util.references.GraphicsReferences;
+import space.plague.framinglib.util.references.TranslationReferences;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
+
+@ApiStatus.Internal
+@Environment(EnvType.CLIENT)
+public class FramingLayoutElement extends AbstractWidget implements LayoutElement {
+    public static final int PADDING = 3;
+
+    private final Minecraft minecraft;
+    private final String name;
+    public FramingLayoutConfigScreen screen;
+
+    private final AlignmentSizeOffset value;
+    @Nullable
+    private final Supplier<AlignmentSizeOffset> defaultValue;
+
+    private boolean showName;
+    @NotNull
+    private Alignments nameAlignment = GraphicsReferences.DEFAULT_LAYOUT_ELEMENT_NAME_ALIGNMENT;
+
+    private boolean showIcon = false;
+    @Nullable
+    private TextureInfo iconInfo;
+    @NotNull
+    private Alignments iconAlignment = GraphicsReferences.DEFAULT_LAYOUT_ELEMENT_ICON_ALIGNMENT;
+
+    @NotNull
+    private Color color = GraphicsReferences.DEFAULT_LAYOUT_ELEMENT_COLOR;
+
+    private boolean doesDrawBackground = true;
+
+    @Nullable
+    private BiConsumer<PoseStack, AlignmentSizeOffset> customRenderingFunction = null;
+
+    private boolean snapping;
+
+    private boolean enableResetButton = true;
+
+    private boolean showButtons;
+    @NotNull
+    private Alignments buttonsAlignment = GraphicsReferences.DEFAULT_LAYOUT_ELEMENT_BUTTONS_ALIGNMENT;
+
+    @Nullable
+    private LayoutResetButtonElement resetButton = null;
+
+    private final List<AbstractLayoutTextureButtonElement> children = new ArrayList<>();
+
+    private boolean wasHovered = false;
+    double draggedX, draggedY;
+
+    private boolean isCurrentlySnappingHorizontally = false;
+    private boolean isCurrentlySnappingVertically = false;
+
+    public FramingLayoutElement(AlignmentSizeOffset originalIn, Component name, @Nullable Supplier<AlignmentSizeOffset> defaultValue) {
+        super(originalIn.getActualX(), originalIn.getActualY(), originalIn.getWidth(), originalIn.getHeight(), name);
+
+        this.minecraft = Minecraft.getInstance();
+
+        this.name = name.getString();
+
+        this.defaultValue = defaultValue;
+
+        this.value = originalIn;
+
+        this.draggedX = x;
+        this.draggedY = y;
+    }
+
+    public void setShowName(boolean showName) {
+        this.showName = showName;
+    }
+
+    public void setNameAlignment(@NotNull Alignments nameAlignment) {
+        this.nameAlignment = nameAlignment;
+    }
+
+    public void setShowIcon(boolean showIcon) {
+        this.showIcon = showIcon;
+    }
+
+    public void setIconInfo(@Nullable TextureInfo iconInfo) {
+        this.iconInfo = iconInfo;
+    }
+
+    public void setIconAlignment(@NotNull Alignments iconAlignment) {
+        this.iconAlignment = iconAlignment;
+    }
+
+    public void setColor(@NotNull Color color) {
+        this.color = color;
+    }
+
+    public void setDoesDrawBackground(boolean doesDrawBackground) {
+        this.doesDrawBackground = doesDrawBackground;
+    }
+
+    public void setCustomRenderingFunction(@Nullable BiConsumer<PoseStack, AlignmentSizeOffset> customRenderingFunction) {
+        this.customRenderingFunction = customRenderingFunction;
+    }
+
+    public void setSnapping(boolean snapping) {
+        this.snapping = snapping;
+    }
+
+    public void setEnableResetButton(boolean enableResetButton) {
+        this.enableResetButton = enableResetButton;
+    }
+
+    public void setShowButtons(boolean showButtons) {
+        this.showButtons = showButtons;
+    }
+
+    public void setButtonsAlignment(@NotNull Alignments buttonsAlignment) {
+        this.buttonsAlignment = buttonsAlignment;
+    }
+
+    @Override
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+        if (this.visible) {
+            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+            if (this.wasHovered != this.isHovered() || isAnyButtonsHovered()) {
+                if (this.isHovered) {
+                    if (this.isFocused()) {
+                        this.queueNarration(200);
+                    } else {
+                        this.queueNarration(750);
+                    }
+                } else {
+                    this.nextNarration = Long.MAX_VALUE;
+                }
+            }
+
+            overlayBackground(poseStack);
+            overlayName(poseStack);
+            overlayIcon(poseStack);
+            if (customRenderingFunction != null) {
+                customRenderingFunction.accept(poseStack, value);
+            }
+
+            for (AbstractLayoutTextureButtonElement child : children) {
+                child.render(poseStack, mouseX, mouseY, partialTick);
+            }
+
+        }
+
+        this.narrate();
+        this.wasHovered = this.isHovered();
+    }
+
+    @Override
+    protected MutableComponent createNarrationMessage() {
+        return new TranslatableComponent(TranslationReferences.CONFIG_LAYOUT_ELEMENT_STRING, this.getMessage());
+    }
+
+    private void overlayBackground(PoseStack poseStack) {
+        if (!doesDrawBackground) {
+            return;
+        }
+        ButtonTextureHolder.ButtonState state = ButtonTextureHolder.ButtonState.ACTIVE;
+        if (this.isHovered) {
+            state = ButtonTextureHolder.ButtonState.HOVERED;
+        }
+        GraphicsReferences.LAYOUT_ELEMENT_BACKGROUND_HOLDER.render(poseStack, x, y, width, height, state, color);
+    }
+
+    private void overlayName(PoseStack poseStack) {
+        if (!showName) {
+            return;
+        }
+
+        int textY = y + height - minecraft.font.lineHeight - 3;
+        switch (nameAlignment.getVAlignment()) {
+            case TOP:
+                textY = y + 3;
+                break;
+            case CENTER:
+                textY = y + (height - minecraft.font.lineHeight) / 2;
+                break;
+        }
+        switch (nameAlignment.getHAlignment()) {
+            case LEFT:
+                drawString(poseStack, minecraft.font, name, x + 3, textY, 0xFFFFFF);
+                break;
+            case MIDDLE:
+                drawCenteredString(poseStack, minecraft.font, name, x + width / 2, textY, 0xFFFFFF);
+                break;
+            default:
+                drawString(poseStack, minecraft.font, name, x + width - 3 - minecraft.font.width(name), textY, 0xFFFFFF);
+        }
+    }
+
+    private void overlayIcon(PoseStack poseStack) {
+        if (!showIcon || iconInfo == null || iconInfo.getWidth() <= 0 || iconInfo.getHeight() <= 0) {
+            return;
+        }
+
+        int iconX = x + width - PADDING - iconInfo.getWidth();
+        switch (iconAlignment.getHAlignment()) {
+            case LEFT:
+                iconX = x + PADDING;
+                break;
+            case MIDDLE:
+                iconX = (int) (x + (float) (width - iconInfo.getWidth()) / 2.0f);
+                break;
+        }
+        int iconY = y + height - PADDING - iconInfo.getHeight();
+        switch (iconAlignment.getVAlignment()) {
+            case TOP:
+                iconY = y + PADDING;
+                break;
+            case CENTER:
+                iconY = (int) (y + (float) (height - iconInfo.getHeight()) / 2.0f);
+                break;
+        }
+
+        iconInfo.render(poseStack, iconX, iconY, GraphicsReferences.WHITE);
+    }
+
+    public void init() {
+        children.clear();
+
+        value.setIsEditing(false);
+        Alignments rsa = value.getScreenAlignment();
+        value.setScreenAlignment(Alignments.create(Alignments.HAlignment.LEFT, Alignments.VAlignment.TOP));
+        updatePosition(value.getActualX(), value.getActualY());
+        int rx = value.getOffsetX();
+        int ry = value.getOffsetY();
+        Alignments ra = value.getAlignment().copy();
+        value.setIsEditing(true);
+        value.setOffsetX(rx);
+        value.setOffsetY(ry);
+        value.setAlignment(ra);
+        value.setScreenAlignment(rsa);
+
+        draggedX = x;
+        draggedY = y;
+
+        if (showButtons) {
+            boolean addResetButton = enableResetButton && defaultValue != null;
+
+            int buttonWidths = 0;
+            if (addResetButton) {
+                buttonWidths += GraphicsReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
+            }
+            int buttonsOffsetX;
+            switch (buttonsAlignment.getHAlignment()) {
+                case LEFT:
+                    buttonsOffsetX = PADDING;
+                    break;
+                case RIGHT:
+                    buttonsOffsetX = width - buttonWidths;
+                    break;
+                default:
+                    buttonsOffsetX = (width - buttonWidths) / 2;
+            }
+            int buttonsOffsetY;
+            switch (buttonsAlignment.getVAlignment()) {
+                case TOP:
+                    buttonsOffsetY = PADDING;
+                    break;
+                case BOTTOM:
+                    buttonsOffsetY = height - (addResetButton ? GraphicsReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER.getDisabled().getHeight() : 0) - PADDING;
+                    break;
+                default:
+                    buttonsOffsetY = (height - (addResetButton ? GraphicsReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER.getDisabled().getHeight() : 0)) / 2;
+            }
+
+            if (addResetButton) {
+                resetButton = new LayoutResetButtonElement(this, buttonsOffsetX, buttonsOffsetY, TranslationReferences.CONFIG_LAYOUT_ELEMENT_RESET, GraphicsReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER);
+                resetButton.setColor(color);
+                children.add(resetButton);
+            }
+        }
+    }
+
+    public void removed() {
+        value.setIsEditing(false);
+    }
+
+    @Override
+    public boolean isCurrentlySnappingHorizontally() {
+        return isCurrentlySnappingHorizontally;
+    }
+    @Override
+    public boolean isCurrentlySnappingVertically() {
+        return isCurrentlySnappingVertically;
+    }
+
+    @Override
+    public boolean isEdited() {
+        return value.hasUnsavedChanges();
+    }
+    @Override
+    public boolean isNotDefault() {
+        return defaultValue != null && !defaultValue.get().isSimilar(value);
+    }
+
+    public boolean isAnyButtonsHovered() {
+        for (AbstractLayoutTextureButtonElement button : children) {
+            if (button.isHovered()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void save() {
+        int sx = value.getOffsetX();
+        int sy = value.getOffsetY();
+        Alignments sa = value.getAlignment().copy();
+        value.setIsEditing(false);
+        value.setOffsetX(sx);
+        value.setOffsetY(sy);
+        value.setAlignment(sa);
+        value.setIsEditing(true);
+    }
+
+    @Override
+    public void resetValue() {
+        if (defaultValue != null) {
+            AlignmentSizeOffset dv = defaultValue.get();
+            dv.setScreenAlignment(Alignments.create(Alignments.HAlignment.LEFT, Alignments.VAlignment.TOP));
+
+            int rx = dv.getOffsetX();
+            int ry = dv.getOffsetY();
+            Alignments ra = dv.getAlignment().copy();
+
+            updatePosition(dv.getActualX(), dv.getActualY());
+
+            this.draggedX = x;
+            this.draggedY = y;
+
+            value.setOffsetX(rx);
+            value.setOffsetY(ry);
+            value.setAlignment(ra);
+
+        }
+    }
+
+    public void setScreen(FramingLayoutConfigScreen screen) {
+        this.screen = screen;
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.active && this.visible && this.isValidClickButton(button)) {
+            boolean flag = this.clicked(mouseX, mouseY);
+            if (flag) {
+                if (isAnyButtonsHovered()) {
+                    for (AbstractLayoutTextureButtonElement buttonElement : children) {
+                        if (buttonElement.mouseClicked(mouseX, mouseY, button)) {
+                            return true;
+                        }
+                    }
+                }
+                this.onClick(mouseX, mouseY);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (this.isValidClickButton(button)) {
+            this.onRelease(mouseX, mouseY);
+            isCurrentlySnappingHorizontally = false;
+            isCurrentlySnappingVertically = false;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
+        super.onDrag(mouseX, mouseY, dragX, dragY);
+        draggedX += dragX;
+        draggedY += dragY;
+
+        boolean localIsCurrentlySnappingHorizontally = false;
+        boolean localIsCurrentlySnappingVertically = false;
+
+        double centerX = draggedX + width / 2.0;
+        double centerY = draggedY + height / 2.0;
+        double screenCenterX = screen.width / 2.0;
+        double screenCenterY = screen.height / 2.0;
+
+        int newX;
+        int newY;
+
+        if (Math.abs(centerX - screenCenterX) <= FramingLayoutConfigScreen.SNAPPING_THRESHOLD) {
+            if (snapping) {
+                newX = (screen.width - width) / 2;
+                localIsCurrentlySnappingHorizontally = true;
+            }
+            else {
+                newX = (int) draggedX;
+            }
+        }
+        else {
+            newX = MathUtils.clamp((int) draggedX, 0, screen.width - width);
+        }
+
+        if (Math.abs(centerY - screenCenterY) <= FramingLayoutConfigScreen.SNAPPING_THRESHOLD) {
+            if (snapping) {
+                newY = (screen.height - height) / 2;
+                localIsCurrentlySnappingVertically = true;
+            }
+            else {
+                newY = (int) draggedY;
+            }
+        }
+        else {
+            newY = MathUtils.clamp((int) draggedY, 0, screen.height - height);
+        }
+
+        isCurrentlySnappingHorizontally = localIsCurrentlySnappingHorizontally;
+        isCurrentlySnappingVertically = localIsCurrentlySnappingVertically;
+
+        updatePosition(newX, newY);
+
+        updateValue();
+    }
+
+    private void updatePosition(int newX, int newY) {
+        this.x = newX;
+        this.y = newY;
+
+        for (AbstractLayoutTextureButtonElement button : children) {
+            button.updatePosition();
+        }
+    }
+
+    protected void updateValue() {
+
+        Alignments.HAlignment newHAlign = PositioningHelper.getHAlignment(x, width);
+        int newX = PositioningHelper.getOffsetX(x, width);
+
+        Alignments.VAlignment newVAlign = PositioningHelper.getVAlignment(y, height);
+        int newY = PositioningHelper.getOffsetY(y, height);
+
+        int centerX = x + width / 2;
+        int centerY = y + height / 2;
+
+        int screenCenterX = screen.width / 2;
+        int screenCenterY = screen.height / 2;
+
+        if (snapping) {
+            if (Math.abs(centerX - screenCenterX) <= FramingLayoutConfigScreen.SNAPPING_THRESHOLD) {
+                newX = 0;
+            }
+            if (Math.abs(centerY - screenCenterY) <= FramingLayoutConfigScreen.SNAPPING_THRESHOLD) {
+                newY = 0;
+            }
+        }
+
+        value.setOffsetX(newX);
+        value.setOffsetY(newY);
+        value.setAlignment(Alignments.create(newHAlign, newVAlign));
+    }
+}

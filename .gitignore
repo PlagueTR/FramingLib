@@ -40,3 +40,20 @@ replay_*.log
 # macos
 
 *.DS_Store
+
+# Python virtual environment
+venv/
+.venv/
+ENV/
+
+# MkDocs build output
+DevDocs/Docs/site/
+
+# Local configuration / caches
+.cache/
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# OS generated files
+Thumbs.db

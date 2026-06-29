@@ -98,7 +98,7 @@ githubRelease {
 	repo = "${rootProject.repo_repo}"
 	tagName = "${rootProject.mod_version}+${rootProject.minecraft_version}"
 	targetCommitish = "${rootProject.repo_branch}"
-	releaseName = "Example Mod v${rootProject.mod_version}+${rootProject.minecraft_version}"
+	releaseName = "Framing Lib v${rootProject.mod_version}+${rootProject.minecraft_version}"
 	body = rootProject.file("CHANGELOG.md").text
 
 	def activePlatformsList = gradle.ext['active_platforms']
