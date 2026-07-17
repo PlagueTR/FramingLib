@@ -40,3 +40,20 @@ replay_*.log
 # macos
 
 *.DS_Store
+
+# Python virtual environment
+FramibgLibDocs/venv/
+FramibgLibDocs/.venv/
+FramibgLibDocs/ENV/
+
+# MkDocs build output
+FramingLibDocs/Docs/site/
+
+# Local configuration / caches
+FramingLibDocs/.cache/
+FramingLibDocs/.pytest_cache/
+FramingLibDocs/__pycache__/
+*.pyc
+
+# OS generated files
+Thumbs.db

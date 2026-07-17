@@ -1,0 +1,85 @@
+site_name: FramingLib Docs
+
+site_url: https://plaguetr.github.io/FramingLibDocs/
+copyright: 2026 Plague
+
+repo_url: https://github.com/PlagueTR/FramingLib/
+edit_uri: blob/main/FramingLibDocs/Docs/docs
+
+remote_name: origin
+remote_branch: gh-pages
+
+nav:
+  - Home: 'index.md'
+  - Getting Started: 'getting_started.md'
+
+not_in_nav: |
+  /stylesheets
+  /javascripts
+
+draft_docs: |
+  drafts/
+
+theme:
+  name: material
+  favicon: img/favicon.ico
+  logo: img/icon.png
+  custom_dir: overrides
+  locale: en
+  features:
+    - content.action.edit
+    # - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    # - content.code.select
+    # - content.footnote.tooltips
+    # - content.tabs.link
+    - content.tooltips
+    # - header.autohide
+    # - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    # - navigation.instant
+    # - navigation.instant.prefetch
+    # - navigation.instant.progress
+    # - navigation.prune
+    - navigation.sections
+    # - navigation.tabs
+    # - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+    # - toc.integrate
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/extra.js
+
+plugins:
+  - search:
+      separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - minify:
+      minify_html: true

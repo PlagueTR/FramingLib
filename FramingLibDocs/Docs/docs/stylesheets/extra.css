@@ -1,0 +1,27 @@
+[data-md-color-scheme="default"] .md-sidebar--primary .md-sidebar__scrollwrap {
+	border-style: solid;
+	border-width: 0px; 
+	border-right-width: 3px;
+	border-right-color: hsla(0, 100%, 0%, 0.5);
+}
+
+[data-md-color-scheme="default"] .md-sidebar--secondary .md-sidebar__scrollwrap {
+	border-style: solid;
+	border-width: 0px;
+	border-left-width: 3px;
+	border-left-color: hsla(0, 100%, 0%, 0.5);
+}
+
+[data-md-color-scheme="slate"] .md-sidebar--primary .md-sidebar__scrollwrap {
+	border-style: solid;
+	border-width: 0px; 
+	border-right-width: 3px;
+	border-right-color: hsla(0, 100%, 100%, 0.5);
+}
+
+[data-md-color-scheme="slate"] .md-sidebar--secondary .md-sidebar__scrollwrap {
+	border-style: solid;
+	border-width: 0px;
+	border-left-width: 3px;
+	border-left-color: hsla(0, 100%, 100%, 0.5);
+}
