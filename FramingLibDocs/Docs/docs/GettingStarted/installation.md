@@ -1,3 +1,3 @@
-# Getting Started
+# Installation
 
 TODO: fill this up

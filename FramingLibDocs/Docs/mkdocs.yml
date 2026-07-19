@@ -11,7 +11,9 @@ remote_branch: gh-pages
 
 nav:
   - Home: 'index.md'
-  - Getting Started: 'getting_started.md'
+  - Getting Started:
+    - Installation: 'GettingStarted/installation.md'
+    - Lmao: 'GettingStarted/lmao.md'
 
 not_in_nav: |
   /stylesheets
@@ -43,7 +45,7 @@ theme:
     # - navigation.instant.prefetch
     # - navigation.instant.progress
     # - navigation.prune
-    - navigation.sections
+    # - navigation.sections
     # - navigation.tabs
     # - navigation.tabs.sticky
     - navigation.top
@@ -78,8 +80,14 @@ extra_css:
 extra_javascript:
   - javascripts/extra.js
 
+extra:
+  version:
+    provider: mike
+
 plugins:
   - search:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - minify:
       minify_html: true
+  - mike:
+      version_selector: true
