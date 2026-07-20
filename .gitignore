@@ -42,9 +42,9 @@ replay_*.log
 *.DS_Store
 
 # Python virtual environment
-FramibgLibDocs/venv/
-FramibgLibDocs/.venv/
-FramibgLibDocs/ENV/
+FramingLibDocs/venv/
+FramingLibDocs/.venv/
+FramingLibDocs/ENV/
 
 # MkDocs build output
 FramingLibDocs/Docs/site/
