@@ -22,6 +22,7 @@ import space.plague.framinglib.api.util.Color;
 import space.plague.framinglib.api.util.TextureInfo;
 import space.plague.framinglib.gui.FramingLayoutConfigScreen;
 import space.plague.framinglib.util.ButtonTextureHolder;
+import space.plague.framinglib.util.MathUtils;
 import space.plague.framinglib.util.references.TextureReferences;
 import space.plague.framinglib.util.references.TranslationReferences;
 
@@ -399,11 +400,6 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
         return false;
     }
 
-    @SuppressWarnings("SameParameterValue")
-    private static int clamp(int value, int min, int max) {
-        return Math.max(min, Math.min(max, value));
-    }
-
     @Override
     protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
         super.onDrag(mouseX, mouseY, dragX, dragY);
@@ -431,7 +427,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
             }
         }
         else {
-            newX = clamp((int) draggedX, 0, screen.width - width);
+            newX = MathUtils.clamp((int) draggedX, 0, screen.width - width);
         }
 
         if (Math.abs(centerY - screenCenterY) <= screen.getSnappingThreshold()) {
@@ -444,7 +440,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
             }
         }
         else {
-            newY = clamp((int) draggedY, 0, screen.height - height);
+            newY = MathUtils.clamp((int) draggedY, 0, screen.height - height);
         }
 
         isCurrentlySnappingHorizontally = localIsCurrentlySnappingHorizontally;
@@ -484,7 +480,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
         }
         else if (centerX >= (screen.width * 2) / 3)  {
             newHAlign = Alignments.HAlignment.RIGHT;
-            newX = screen.width - x;
+            newX = screen.width - x - width;
         }
         else {
             newHAlign = Alignments.HAlignment.MIDDLE;
@@ -502,7 +498,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
         }
         else if (centerY >= (screen.height * 2) / 3) {
             newVAlign = Alignments.VAlignment.BOTTOM;
-            newY = screen.height - y;
+            newY = screen.height - y - height;
         }
         else {
             newVAlign = Alignments.VAlignment.CENTER;

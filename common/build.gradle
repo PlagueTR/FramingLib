@@ -9,13 +9,9 @@ loom {
 dependencies {
     if (rootProject.architectury_loom_id == 'dev.architectury.loom-no-remap') {
         implementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-
-        //implementation("me.shedaniel.cloth:cloth-config-fabric:${rootProject.common_cloth_config_version}")
     }
     else {
         modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-
-        //modImplementation("me.shedaniel.cloth:cloth-config-fabric:${rootProject.common_cloth_config_version}")
     }
 }
 

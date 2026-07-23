@@ -32,12 +32,7 @@ public class PositioningHelper {
                 result = (windowWidth - alignmentSizeOffset.getScaledWidth()) / 2 + alignmentSizeOffset.getOffsetX();
         }
 
-        if (result < 0) {
-            result = 0;
-        }
-        else if (result > windowWidth - alignmentSizeOffset.getScaledWidth()) {
-            result = windowWidth - alignmentSizeOffset.getScaledWidth();
-        }
+        result = MathUtils.clamp(result, 0, windowWidth - alignmentSizeOffset.getScaledWidth());
 
         return result;
     }
@@ -63,12 +58,7 @@ public class PositioningHelper {
                 result = (windowHeight - alignmentSizeOffset.getScaledHeight()) / 2 + alignmentSizeOffset.getOffsetY();
         }
 
-        if (result < 0) {
-            result = 0;
-        }
-        else if (result > windowHeight - alignmentSizeOffset.getScaledHeight()) {
-            result = windowHeight - alignmentSizeOffset.getScaledHeight();
-        }
+        result = MathUtils.clamp(result, 0, windowHeight - alignmentSizeOffset.getScaledHeight());
 
         return result;
     }
