@@ -23,13 +23,13 @@ public class PositioningHelper {
 
         switch(alignmentSizeOffset.getHAlignment()) {
             case LEFT:
-                result = alignmentSizeOffset.getX();
+                result = alignmentSizeOffset.getOffsetX();
                 break;
             case RIGHT:
-                result = windowWidth - alignmentSizeOffset.getScaledWidth() - alignmentSizeOffset.getX();
+                result = windowWidth - alignmentSizeOffset.getScaledWidth() - alignmentSizeOffset.getOffsetX();
                 break;
             case MIDDLE:
-                result = (windowWidth - alignmentSizeOffset.getScaledWidth()) / 2 + alignmentSizeOffset.getX();
+                result = (windowWidth - alignmentSizeOffset.getScaledWidth()) / 2 + alignmentSizeOffset.getOffsetX();
         }
 
         if (result < 0) {
@@ -54,13 +54,13 @@ public class PositioningHelper {
 
         switch (alignmentSizeOffset.getVAlignment()) {
             case TOP:
-                result = alignmentSizeOffset.getY();
+                result = alignmentSizeOffset.getOffsetY();
                 break;
             case BOTTOM:
-                result = windowHeight - alignmentSizeOffset.getScaledHeight() - alignmentSizeOffset.getY();
+                result = windowHeight - alignmentSizeOffset.getScaledHeight() - alignmentSizeOffset.getOffsetY();
                 break;
             case CENTER:
-                result = (windowHeight - alignmentSizeOffset.getScaledHeight()) / 2 + alignmentSizeOffset.getY();
+                result = (windowHeight - alignmentSizeOffset.getScaledHeight()) / 2 + alignmentSizeOffset.getOffsetY();
         }
 
         if (result < 0) {

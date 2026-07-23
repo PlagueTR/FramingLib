@@ -11,16 +11,16 @@ import space.plague.framinglib.impl.AlignmentSizeOffsetImpl;
 @SuppressWarnings("unused")
 public interface AlignmentSizeOffset {
 
-    static AlignmentSizeOffset create(int x, int y, int width, int height, float scale, Alignments.HAlignment hAlignment, Alignments.VAlignment vAlignment) {
-        return new AlignmentSizeOffsetImpl(x, y, width, height, scale, Alignments.create(hAlignment, vAlignment));
+    static AlignmentSizeOffset create(int offsetX, int offsetY, int width, int height, float scale, Alignments.HAlignment hAlignment, Alignments.VAlignment vAlignment) {
+        return new AlignmentSizeOffsetImpl(offsetX, offsetY, width, height, scale, Alignments.create(hAlignment, vAlignment));
     }
 
-    static AlignmentSizeOffset create(int x, int y, int width, int height, float scale, @NotNull Alignments alignment) {
-        return new AlignmentSizeOffsetImpl(x, y, width, height, scale, alignment);
+    static AlignmentSizeOffset create(int offsetX, int offsetY, int width, int height, float scale, @NotNull Alignments alignment) {
+        return new AlignmentSizeOffsetImpl(offsetX, offsetY, width, height, scale, alignment);
     }
 
-    int getX();
-    int getY();
+    int getOffsetX();
+    int getOffsetY();
 
     int getActualX();
     int getActualY();

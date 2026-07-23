@@ -22,14 +22,14 @@ import java.util.function.Supplier;
 public abstract class AbstractTextureButtonElement extends AbstractButton {
 
     protected final Screen screen;
-    private final ButtonTextureHolder buttonTextureHolder;
+    protected final ButtonTextureHolder buttonTextureHolder;
 
     @Nullable
     private Supplier<Optional<Component>> tooltipSupplier;
 
     private Color color;
 
-    private boolean wasHovered = false;
+    protected boolean wasHovered = false;
 
     public AbstractTextureButtonElement(Screen parent, int x, int y, Component name, ButtonTextureHolder buttonTextureHolder) {
         super(x, y, buttonTextureHolder.getDisabled().getWidth(), buttonTextureHolder.getDisabled().getHeight(), name);

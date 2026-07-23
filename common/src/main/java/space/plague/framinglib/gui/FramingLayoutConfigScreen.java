@@ -153,6 +153,10 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
         return SNAPPING_THRESHOLD;
     }
 
+    public boolean isCurrentlyHoveringButtons() {
+        return (backButton != null && backButton.isHovered()) || (saveButton != null && saveButton.isHovered()) || (resetAllButton != null && resetAllButton.isHovered());
+    }
+
     public void setTooltip(Component tooltip) {
         this.tooltip = tooltip;
     }
@@ -243,7 +247,7 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
         buffer.begin(7, DefaultVertexFormat.POSITION_COLOR);
         Matrix4f matrix = poseStack.last().pose();
-        
+
         int dot_r = 64;
         int dot_g = 64;
         int dot_b = 64;
