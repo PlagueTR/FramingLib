@@ -43,6 +43,7 @@ public interface LayoutElementBuilder {
 
     LayoutElementBuilder setSnapping(boolean snapping);
 
+    LayoutElementBuilder setShowButtons(boolean showButtons);
     LayoutElementBuilder setButtonsAlignment(@NotNull Alignments buttonsAlignment);
     LayoutElementBuilder setButtonsAlignment(Alignments.HAlignment hAlignment, Alignments.VAlignment vAlignment);
 

@@ -28,9 +28,11 @@ public class LayoutConfigScreenBuilderImpl implements LayoutConfigScreenBuilder 
     private Runnable savingRunnable = null;
 
     private boolean doesConfirmSave = true;
-    private boolean doesAlwaysShowSaveButtons = true;
+    private boolean doesShowButtons = true;
 
     private Alignments buttonsAlignment = Alignments.create(Alignments.HAlignment.MIDDLE, Alignments.VAlignment.TOP);
+
+    private boolean doesShowResetButton = true;
 
     private Consumer<Screen> afterInitConsumer = screen -> {};
 
@@ -85,28 +87,40 @@ public class LayoutConfigScreenBuilderImpl implements LayoutConfigScreenBuilder 
     }
 
     @Override
-    public boolean doesAlwaysShowSaveButtons() {
-        return doesAlwaysShowSaveButtons;
+    public boolean doesShowButtons() {
+        return doesShowButtons;
     }
     @Override
-    public LayoutConfigScreenBuilder setDoesAlwaysShowSaveButtons(boolean doesAlwaysShowSaveButtons) {
-        this.doesAlwaysShowSaveButtons = doesAlwaysShowSaveButtons;
+    public LayoutConfigScreenBuilder setDoesShowButtons(boolean doesShowButtons) {
+        this.doesShowButtons = doesShowButtons;
         return this;
     }
 
     @Override
     public Alignments getButtonsAlignment() {
-        return null;
+        return this.buttonsAlignment;
     }
 
     @Override
     public LayoutConfigScreenBuilder setButtonsAlignment(Alignments.HAlignment hAlignment, Alignments.VAlignment vAlignment) {
-        return null;
+        this.buttonsAlignment = Alignments.create(hAlignment, vAlignment);
+        return this;
     }
 
     @Override
     public LayoutConfigScreenBuilder setButtonsAlignment(Alignments buttonsAlignment) {
         this.buttonsAlignment = buttonsAlignment;
+        return this;
+    }
+
+    @Override
+    public boolean doesShowResetButton() {
+        return this.doesShowResetButton;
+    }
+
+    @Override
+    public LayoutConfigScreenBuilder setShowResetButton(boolean showResetButton) {
+        this.doesShowResetButton = showResetButton;
         return this;
     }
 
@@ -151,8 +165,9 @@ public class LayoutConfigScreenBuilderImpl implements LayoutConfigScreenBuilder 
         FramingLayoutConfigScreen screen = new FramingLayoutConfigScreen(parent, title, layoutElementList, backgroundTexture);
         screen.setSavingRunnable(savingRunnable);
         screen.setTransparentBackground(transparentBackground);
-        screen.setAlwaysShowSavingButtons(doesAlwaysShowSaveButtons);
+        screen.setShowButtons(doesShowButtons);
         screen.setButtonsAlignments(buttonsAlignment);
+        screen.setShowResetButton(doesShowResetButton);
         screen.setConfirmSave(doesConfirmSave);
         screen.setAfterInitConsumer(afterInitConsumer);
         return screen;

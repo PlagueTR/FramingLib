@@ -70,6 +70,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
     private boolean enableResetButton = true;
 
+    private boolean showButtons;
     @NotNull
     private Alignments buttonsAlignment = Alignments.create(Alignments.HAlignment.RIGHT, Alignments.VAlignment.TOP);
 
@@ -141,6 +142,10 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
     public void setEnableResetButton(boolean enableResetButton) {
         this.enableResetButton = enableResetButton;
+    }
+
+    public void setShowButtons(boolean showButtons) {
+        this.showButtons = showButtons;
     }
 
     public void setButtonsAlignment(@NotNull Alignments buttonsAlignment) {
@@ -257,39 +262,41 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
         draggedX = x;
         draggedY = y;
 
-        boolean addResetButton = enableResetButton && getDefaultValue() != null;
+        if (showButtons) {
+            boolean addResetButton = enableResetButton && getDefaultValue() != null;
 
-        int buttonWidths = 0;
-        if (addResetButton) {
-            buttonWidths += TextureReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
-        }
-        int buttonsOffsetX;
-        switch (buttonsAlignment.getHAlignment()) {
-            case LEFT:
-                buttonsOffsetX = PADDING;
-                break;
-            case RIGHT:
-                buttonsOffsetX = width - buttonWidths;
-                break;
-            default:
-                buttonsOffsetX = (width - buttonWidths) / 2;
-        }
-        int buttonsOffsetY;
-        switch (buttonsAlignment.getVAlignment()) {
-            case TOP:
-                buttonsOffsetY = PADDING;
-                break;
-            case BOTTOM:
-                buttonsOffsetY = height - (addResetButton ? TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight() : 0) - PADDING;
-                break;
-            default:
-                buttonsOffsetY = (height - (addResetButton ? TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight() : 0)) / 2;
-        }
+            int buttonWidths = 0;
+            if (addResetButton) {
+                buttonWidths += TextureReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
+            }
+            int buttonsOffsetX;
+            switch (buttonsAlignment.getHAlignment()) {
+                case LEFT:
+                    buttonsOffsetX = PADDING;
+                    break;
+                case RIGHT:
+                    buttonsOffsetX = width - buttonWidths;
+                    break;
+                default:
+                    buttonsOffsetX = (width - buttonWidths) / 2;
+            }
+            int buttonsOffsetY;
+            switch (buttonsAlignment.getVAlignment()) {
+                case TOP:
+                    buttonsOffsetY = PADDING;
+                    break;
+                case BOTTOM:
+                    buttonsOffsetY = height - (addResetButton ? TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight() : 0) - PADDING;
+                    break;
+                default:
+                    buttonsOffsetY = (height - (addResetButton ? TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight() : 0)) / 2;
+            }
 
-        if (addResetButton) {
-            screen.addLayoutButton(resetButton = new LayoutResetButtonElement(this, buttonsOffsetX, buttonsOffsetY, TranslationReferences.CONFIG_LAYOUT_ELEMENT_RESET, TextureReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER));
-            resetButton.setColor(color);
-            children.add(resetButton);
+            if (addResetButton) {
+                resetButton = screen.addLayoutButton(new LayoutResetButtonElement(this, buttonsOffsetX, buttonsOffsetY, TranslationReferences.CONFIG_LAYOUT_ELEMENT_RESET, TextureReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER));
+                resetButton.setColor(color);
+                children.add(resetButton);
+            }
         }
     }
 
@@ -489,5 +496,4 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
         value = AlignmentSizeOffset.create(newX, newY, original.get().getWidth(), original.get().getHeight(), original.get().getScale(), newHAlign, newVAlign);
     }
-
 }

@@ -28,7 +28,7 @@ public class FramingLibDemo {
             .setTitle(TranslationReferences.DEMO_CONFIG_TITLE)
             .setButtonsAlignment(Alignments.create(Alignments.HAlignment.MIDDLE, Alignments.VAlignment.TOP))
             .setTransparentBackground(true)
-            .setDoesAlwaysShowSaveButtons(true)
+            .setDoesShowButtons(true)
             ;
 
         LayoutElementBuilder layoutElement1 = builder.startLayoutElement(

@@ -50,7 +50,7 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
     private Runnable savingRunnable = null;
 
     private boolean confirmSave;
-    private boolean showSavingButtons;
+    private boolean showButtons;
 
     @Nullable
     private Consumer<Screen> afterInitConsumer = null;
@@ -61,6 +61,8 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
     private final List<LayoutElement> layoutElementList;
 
     private Alignments buttonsAlignments = Alignments.create(Alignments.HAlignment.MIDDLE, Alignments.VAlignment.TOP);
+
+    private boolean showResetButton;
 
     @Nullable
     private FramingLayoutConfigBackButton backButton;
@@ -126,15 +128,15 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
         return false;
     }
 
-    public boolean isShowSavingButtons() {
+    public boolean isShowButtons() {
         return isAlwaysShowSavingButtons();
     }
     public boolean isAlwaysShowSavingButtons() {
-        return showSavingButtons;
+        return showButtons;
     }
 
-    public void setAlwaysShowSavingButtons(boolean showSavingButtons) {
-        this.showSavingButtons = showSavingButtons;
+    public void setShowButtons(boolean showButtons) {
+        this.showButtons = showButtons;
     }
 
     public boolean isTransparentBackground() {
@@ -201,6 +203,10 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
             }
         }
         return true;
+    }
+
+    public void setShowResetButton(boolean showResetButton) {
+        this.showResetButton = showResetButton;
     }
 
     private class QuitSaveConsumer implements BooleanConsumer {
@@ -315,10 +321,14 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
     protected void init() {
         super.init();
 
-        if (isShowSavingButtons()) {
-            int buttonWidths = TextureReferences.DENY_BUTTON_HOLDER.getDisabled().getWidth() + TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getWidth() + TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getWidth() + PADDING * 3;
+        if (isShowButtons()) {
+            int buttonWidths = TextureReferences.DENY_BUTTON_HOLDER.getDisabled().getWidth() + TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getWidth() + PADDING * 2;
 
-            int buttonsX = 0;
+            if (showResetButton) {
+                buttonWidths += TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
+            }
+
+            int buttonsX;
             switch (buttonsAlignments.getHAlignment()) {
                 case LEFT:
                     buttonsX = PADDING;
@@ -329,16 +339,16 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
                 default:
                     buttonsX = (width - buttonWidths) / 2;
             }
-            int buttonsY = 0;
+            int buttonsY;
             switch (buttonsAlignments.getVAlignment()) {
                 case TOP:
                     buttonsY = PADDING;
                     break;
                 case BOTTOM:
-                    buttonsY = height - Math.max(TextureReferences.DENY_BUTTON_HOLDER.getDisabled().getHeight(), Math.max(TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getHeight(), TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight())) - PADDING;
+                    buttonsY = height - Math.max(TextureReferences.DENY_BUTTON_HOLDER.getDisabled().getHeight(), Math.max(TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getHeight(), (showResetButton ? TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight() : 0))) - PADDING;
                     break;
                 default:
-                    buttonsY = (height - Math.max(TextureReferences.DENY_BUTTON_HOLDER.getDisabled().getHeight(), Math.max(TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getHeight(), TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight()))) / 2;
+                    buttonsY = (height - Math.max(TextureReferences.DENY_BUTTON_HOLDER.getDisabled().getHeight(), Math.max(TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getHeight(), (showResetButton ? TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight() : 0)))) / 2;
             }
 
             this.addButton(backButton = new FramingLayoutConfigBackButton(this, buttonsX, buttonsY, isEdited()? TranslationReferences.CONFIG_CANCEL_DISCARD : TranslationReferences.CONFIG_CANCEL, TextureReferences.DENY_BUTTON_HOLDER));
@@ -346,7 +356,9 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
             this.addButton(saveButton = new FramingLayoutConfigSaveButton(this, buttonsX, buttonsY, TranslationReferences.CONFIG_SAVE, TextureReferences.ACCEPT_BUTTON_HOLDER));
             saveButton.active = isEdited();
             buttonsX += TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
-            this.addButton(resetAllButton = new FramingLayoutConfigResetAllButton(this, buttonsX, buttonsY, TranslationReferences.CONFIG_RESET_ALL, TextureReferences.RESET_BUTTON_HOLDER));
+            if (showResetButton) {
+                this.addButton(resetAllButton = new FramingLayoutConfigResetAllButton(this, buttonsX, buttonsY, TranslationReferences.CONFIG_RESET_ALL, TextureReferences.RESET_BUTTON_HOLDER));
+            }
         }
 
         if (!getLayoutElementList().isEmpty()) {
@@ -369,7 +381,7 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
             return true;
         }
         if (keyCode == GLFW.GLFW_KEY_ESCAPE && this.shouldCloseOnEsc()) {
-            if (isShowSavingButtons()) {
+            if (isShowButtons()) {
                 return quit();
             }
             else {

@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import space.plague.framinglib.api.util.AlignmentSizeOffset;
 import space.plague.framinglib.api.util.Alignments;
-import space.plague.framinglib.gui.elements.layoutelement.FramingLayoutElement;
 import space.plague.framinglib.impl.LayoutConfigScreenBuilderImpl;
 import space.plague.framinglib.impl.builders.LayoutElementBuilderImpl;
 
@@ -37,12 +36,15 @@ public interface LayoutConfigScreenBuilder {
     boolean doesConfirmSave();
     LayoutConfigScreenBuilder setDoesConfirmSave(boolean doesConfirmSave);
 
-    boolean doesAlwaysShowSaveButtons();
-    LayoutConfigScreenBuilder setDoesAlwaysShowSaveButtons(boolean doesAlwaysShowSaveButtons);
+    boolean doesShowButtons();
+    LayoutConfigScreenBuilder setDoesShowButtons(boolean doesShowButtons);
 
     Alignments getButtonsAlignment();
     LayoutConfigScreenBuilder setButtonsAlignment(Alignments.HAlignment hAlignment, Alignments.VAlignment vAlignment);
     LayoutConfigScreenBuilder setButtonsAlignment(Alignments buttonsAlignment);
+
+    boolean doesShowResetButton();
+    LayoutConfigScreenBuilder setShowResetButton(boolean showResetButton);
 
     Consumer<Screen> getAfterInitConsumer();
     LayoutConfigScreenBuilder setAfterInitConsumer(Consumer<Screen> afterInitConsumer);

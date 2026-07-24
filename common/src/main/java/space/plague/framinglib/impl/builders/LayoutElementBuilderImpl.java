@@ -53,6 +53,7 @@ public class LayoutElementBuilderImpl implements LayoutElementBuilder {
 
     private boolean enableResetButton = true;
 
+    private boolean showButtons = true;
     @NotNull
     private Alignments buttonsAlignment = Alignments.create(Alignments.HAlignment.RIGHT, Alignments.VAlignment.TOP);
 
@@ -149,6 +150,12 @@ public class LayoutElementBuilderImpl implements LayoutElementBuilder {
     }
 
     @Override
+    public LayoutElementBuilder setShowButtons(boolean showButtons) {
+        this.showButtons = showButtons;
+        return this;
+    }
+
+    @Override
     public LayoutElementBuilder setButtonsAlignment(@NotNull Alignments buttonsAlignment) {
         this.buttonsAlignment = buttonsAlignment;
         return this;
@@ -182,6 +189,8 @@ public class LayoutElementBuilderImpl implements LayoutElementBuilder {
         element.setCustomRenderingFunction(customRenderingFunction);
 
         element.setSnapping(snapping);
+
+        element.setShowButtons(showButtons);
 
         element.setEnableResetButton(enableResetButton);
 
