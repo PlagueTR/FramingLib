@@ -22,6 +22,11 @@ public class AlignmentSizeOffsetImpl implements AlignmentSizeOffset {
     @NotNull
     private final Alignments alignment;
 
+    private boolean dirtyX = true;
+    private boolean dirtyY = true;
+    private int actualX = 0;
+    private int actualY = 0;
+
     public AlignmentSizeOffsetImpl(int offsetX, int offsetY, int width, int height, float scale, @NotNull Alignments alignment) {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
@@ -29,6 +34,30 @@ public class AlignmentSizeOffsetImpl implements AlignmentSizeOffset {
         this.height = height;
         this.scale = scale;
         this.alignment = alignment;
+
+        WindowResizeNotifier.register(this);
+    }
+
+    public AlignmentSizeOffsetImpl(int actualX, int actualY, int width, int height, float scale) {
+        this.offsetX = PositioningHelper.getOffsetX(actualX, (int) (width * scale));
+        this.offsetY = PositioningHelper.getOffsetY(actualY, (int) (height * scale));
+        this.width = width;
+        this.height = height;
+        this.scale = scale;
+        this.alignment = Alignments.create(PositioningHelper.getHAlignment(actualX, (int) (width * scale)), PositioningHelper.getVAlignment(actualY, (int) (height * scale)));
+
+        WindowResizeNotifier.register(this);
+    }
+
+    @Override
+    public void markDirty() {
+        this.dirtyX = true;
+        this.dirtyY = true;
+    }
+
+    @Override
+    public boolean isDirty() {
+        return this.dirtyX || this.dirtyY;
     }
 
     @Override
@@ -43,12 +72,20 @@ public class AlignmentSizeOffsetImpl implements AlignmentSizeOffset {
 
     @Override
     public int getActualX() {
-        return PositioningHelper.getActualX(this);
+        if (dirtyX) {
+            this.actualX = PositioningHelper.getActualX(this);
+            dirtyX = false;
+        }
+        return this.actualX;
     }
 
     @Override
     public int getActualY() {
-        return PositioningHelper.getActualY(this);
+        if (dirtyY) {
+            this.actualY = PositioningHelper.getActualY(this);
+            dirtyY = false;
+        }
+        return this.actualY;
     }
 
     @Override

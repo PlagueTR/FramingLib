@@ -19,6 +19,13 @@ public interface AlignmentSizeOffset {
         return new AlignmentSizeOffsetImpl(offsetX, offsetY, width, height, scale, alignment);
     }
 
+    static AlignmentSizeOffset fromActualPosition(int actualX, int actualY, int width, int height, float scale) {
+        return new AlignmentSizeOffsetImpl(actualX, actualY, width, height, scale);
+    }
+
+    void markDirty();
+    boolean isDirty();
+
     int getOffsetX();
     int getOffsetY();
 

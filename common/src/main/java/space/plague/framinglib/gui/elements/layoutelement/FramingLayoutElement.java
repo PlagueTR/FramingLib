@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import space.plague.framinglib.api.LayoutElement;
-import space.plague.framinglib.api.WindowResizeNotifier;
 import space.plague.framinglib.api.util.AlignmentSizeOffset;
 import space.plague.framinglib.api.util.Alignments;
 import space.plague.framinglib.api.util.Color;
@@ -74,8 +73,6 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
     @NotNull
     private Alignments buttonsAlignment = Alignments.create(Alignments.HAlignment.RIGHT, Alignments.VAlignment.TOP);
 
-    private final Runnable resizeListener = this::onWindowResized;
-
     @Nullable
     private LayoutResetButtonElement resetButton = null;
 
@@ -104,12 +101,6 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
         this.draggedX = x;
         this.draggedY = y;
-
-        WindowResizeNotifier.subscribe(this.resizeListener);
-    }
-
-    public void unsubscribe() {
-        WindowResizeNotifier.unsubscribe(this.resizeListener);
     }
 
     public void setShowName(boolean showName) {
@@ -158,14 +149,6 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
     public @Nullable Supplier<AlignmentSizeOffset> getDefaultValue() {
         return defaultValue;
-    }
-
-    public void onWindowResized() {
-
-        updatePosition(getValue().getActualX(), getValue().getActualY());
-
-        draggedX = x;
-        draggedY = y;
     }
 
     @Override
@@ -218,7 +201,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
             return;
         }
 
-        int textY = y + height - minecraft.font.lineHeight - 3;;
+        int textY = y + height - minecraft.font.lineHeight - 3;
         switch (nameAlignment.getVAlignment()) {
             case TOP:
                 textY = y + 3;
@@ -263,19 +246,24 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
                 break;
         }
 
-        iconInfo.render(poseStack, x, y, WHITE);
+        iconInfo.render(poseStack, iconX, iconY, WHITE);
     }
 
     public void init() {
         children.clear();
 
-        boolean addResetButton = enableResetButton && defaultValue != null;
+        getValue().markDirty();
+        updatePosition(getValue().getActualX(), getValue().getActualY());
+        draggedX = x;
+        draggedY = y;
+
+        boolean addResetButton = enableResetButton && getDefaultValue() != null;
 
         int buttonWidths = 0;
         if (addResetButton) {
             buttonWidths += TextureReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
         }
-        int buttonsOffsetX = 0;
+        int buttonsOffsetX;
         switch (buttonsAlignment.getHAlignment()) {
             case LEFT:
                 buttonsOffsetX = PADDING;
@@ -286,7 +274,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
             default:
                 buttonsOffsetX = (width - buttonWidths) / 2;
         }
-        int buttonsOffsetY = 0;
+        int buttonsOffsetY;
         switch (buttonsAlignment.getVAlignment()) {
             case TOP:
                 buttonsOffsetY = PADDING;
@@ -320,7 +308,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
     }
     @Override
     public boolean isNotDefault() {
-        return defaultValue != null && !defaultValue.get().equals(getValue());
+        return getDefaultValue() != null && !getDefaultValue().get().equals(getValue());
     }
 
     public boolean isAnyButtonsHovered() {
@@ -341,13 +329,13 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
     @Override
     public void resetValue() {
-        if (defaultValue != null) {
-            updatePosition(defaultValue.get().getActualX(), defaultValue.get().getActualY());
+        if (getDefaultValue() != null) {
+            updatePosition(getDefaultValue().get().getActualX(), getDefaultValue().get().getActualY());
 
             this.draggedX = x;
             this.draggedY = y;
 
-            value = defaultValue.get();
+            value = getDefaultValue().get();
         }
     }
 

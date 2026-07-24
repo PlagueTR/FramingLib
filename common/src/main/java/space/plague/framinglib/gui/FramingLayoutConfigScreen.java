@@ -373,16 +373,6 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
     }
 
     @Override
-    public void removed() {
-        super.removed();
-        for (LayoutElement element : getLayoutElementList()) {
-            if (element instanceof FramingLayoutElement) {
-                ((FramingLayoutElement) element).unsubscribe();
-            }
-        }
-    }
-
-    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (resetAllButton != null && resetAllButton.keyPressed(keyCode, scanCode, modifiers)) {
             return true;

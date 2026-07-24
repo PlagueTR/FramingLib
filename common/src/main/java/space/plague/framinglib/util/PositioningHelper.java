@@ -3,24 +3,74 @@ package space.plague.framinglib.util;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.Minecraft;
+
 import space.plague.framinglib.api.util.AlignmentSizeOffset;
-import space.plague.framinglib.impl.WindowResizeNotifierImpl;
+import space.plague.framinglib.api.util.Alignments;
 
 @Environment(EnvType.CLIENT)
 public class PositioningHelper {
 
-    public static int windowWidth = -1, windowHeight = -1;
+    public static Alignments.HAlignment getHAlignment(int actualX, int scaledWidth) {
+        int windowWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+
+        int centerX = actualX + scaledWidth / 2;
+
+        if (centerX <= windowWidth / 3) {
+            return Alignments.HAlignment.LEFT;
+        }
+        else if (centerX >= (windowWidth * 2) / 3) {
+            return Alignments.HAlignment.RIGHT;
+        }
+        return Alignments.HAlignment.MIDDLE;
+    }
+
+    public static int getOffsetX(int actualX, int scaledWidth) {
+        int windowWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+
+        int centerX = actualX + scaledWidth / 2;
+
+        if (centerX <= windowWidth / 3) {
+            return actualX;
+        }
+        else if (centerX >= (windowWidth * 2) / 3) {
+            return windowWidth - actualX - scaledWidth;
+        }
+        return -((windowWidth - scaledWidth) / 2 - actualX);
+    }
+
+    public static Alignments.VAlignment getVAlignment(int actualY, int scaledHeight) {
+        int windowHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
+
+        int centerY = actualY + scaledHeight / 2;
+
+        if (centerY <= windowHeight / 3) {
+            return Alignments.VAlignment.TOP;
+        }
+        else if (centerY >= (windowHeight * 2) / 3) {
+            return Alignments.VAlignment.BOTTOM;
+        }
+        return Alignments.VAlignment.CENTER;
+    }
+
+    public static int getOffsetY(int actualY, int scaledHeight) {
+        int windowHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
+
+        int centerY = actualY + scaledHeight / 2;
+
+        if (centerY <= windowHeight / 3) {
+            return actualY;
+        }
+        else if (centerY >= (windowHeight * 2) / 3) {
+            return windowHeight - actualY - scaledHeight;
+        }
+        return -((windowHeight - scaledHeight) / 2 - actualY);
+    }
 
     public static int getActualX(AlignmentSizeOffset alignmentSizeOffset) {
-        if (windowWidth == -1 || windowHeight == -1) {
-            WindowResizeNotifierImpl.onResize();
-            if (windowWidth == -1 || windowHeight == -1) {
-                return 0;
-            }
-        }
+        int windowWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
 
         int result = 0;
-
         switch(alignmentSizeOffset.getHAlignment()) {
             case LEFT:
                 result = alignmentSizeOffset.getOffsetX();
@@ -38,12 +88,7 @@ public class PositioningHelper {
     }
 
     public static int getActualY(AlignmentSizeOffset alignmentSizeOffset) {
-        if (windowWidth == -1 || windowHeight == -1) {
-            WindowResizeNotifierImpl.onResize();
-            if (windowWidth == -1 || windowHeight == -1) {
-                return 0;
-            }
-        }
+        int windowHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
 
         int result = 0;
 
