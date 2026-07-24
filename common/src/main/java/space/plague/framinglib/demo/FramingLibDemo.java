@@ -26,9 +26,7 @@ public class FramingLibDemo {
         LayoutConfigScreenBuilder builder = LayoutConfigScreenBuilder.create()
             .setParentScreen(Minecraft.getInstance().screen)
             .setTitle(TranslationReferences.DEMO_CONFIG_TITLE)
-            .setButtonsAlignment(Alignments.create(Alignments.HAlignment.MIDDLE, Alignments.VAlignment.TOP))
             .setTransparentBackground(true)
-            .setDoesShowButtons(true)
             ;
 
         LayoutElementBuilder layoutElement1 = builder.startLayoutElement(
@@ -36,13 +34,11 @@ public class FramingLibDemo {
             TranslationReferences.DEMO_ELEMENT_1)
             .setDefaultAlignmentSizeOffset(element1_default)
             .setShowName(false)
-            .setShowIcon(true)
             .setIcon(TextureReferences.DEMO_ELEMENT_ICON)
             .setIconAlignment(Alignments.create(Alignments.HAlignment.MIDDLE, Alignments.VAlignment.CENTER))
             .setDoesDrawBackground(false)
             .setSnapping(false)
-            .setSaveConsumer( alignmentSizeOffset -> { element1 = alignmentSizeOffset; })
-            .setButtonsAlignment(Alignments.create(Alignments.HAlignment.RIGHT, Alignments.VAlignment.TOP))
+            .setSaveConsumer( alignmentSizeOffset -> element1 = alignmentSizeOffset)
             .setEnableResetButton(false)
             ;
 
@@ -52,14 +48,9 @@ public class FramingLibDemo {
             element2,
             TranslationReferences.DEMO_ELEMENT_2)
             .setDefaultAlignmentSizeOffset(element2_default)
-            .setShowName(true)
             .setNameAlignment(Alignments.create(Alignments.HAlignment.MIDDLE, Alignments.VAlignment.CENTER))
-            .setShowIcon(false)
             .setColor(Color.create("#9e34eb"))
-            .setDoesDrawBackground(true)
-            .setSnapping(true)
-            .setSaveConsumer(alignmentSizeOffset -> { element2 = alignmentSizeOffset; })
-            .setEnableResetButton(true)
+            .setSaveConsumer(alignmentSizeOffset -> element2 = alignmentSizeOffset)
             ;
 
         builder.addLayoutElementEntry(layoutElement2.build());

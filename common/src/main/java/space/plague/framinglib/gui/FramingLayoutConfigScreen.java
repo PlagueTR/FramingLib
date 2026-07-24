@@ -313,10 +313,6 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
         tooltip = null;
     }
 
-    public <T extends AbstractWidget> T addLayoutButton(T abstractWidget) {
-        return this.addButton(abstractWidget);
-    }
-
     @Override
     protected void init() {
         super.init();
@@ -362,7 +358,8 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
         }
 
         if (!getLayoutElementList().isEmpty()) {
-            for (LayoutElement layoutElement : getLayoutElementList()) {
+            for (int i = getLayoutElementList().size() - 1; i >= 0; i--) {
+                LayoutElement layoutElement = getLayoutElementList().get(i);
                 if (layoutElement instanceof FramingLayoutElement) {
                     this.addWidget((FramingLayoutElement) layoutElement);
                     ((FramingLayoutElement) layoutElement).init();

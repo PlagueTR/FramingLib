@@ -9,10 +9,25 @@ public final class Main {
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     public static void init() {
+        logInfo("Loading...");
 
-        LOGGER.info("[" + MOD_NAME + "] Loading...");
+        logInfo("All done!");
+    }
 
-        LOGGER.info("[" + MOD_NAME + "] All done!");
+    public static void logInfo(String message, Object... params) {
+        LOGGER.info("[" + MOD_NAME + "] " + message, params);
+    }
+
+    public static void logWarn(String message, Object... params) {
+        LOGGER.warn("[" + MOD_NAME + "] " + message, params);
+    }
+
+    public static void logError(String message, Object... params) {
+        LOGGER.error("[" + MOD_NAME + "] " + message, params);
+    }
+
+    public static void logDebug(String message, Object... params) {
+        LOGGER.debug("[" + MOD_NAME + "] " + message, params);
     }
 
 }

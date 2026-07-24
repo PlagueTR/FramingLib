@@ -9,10 +9,15 @@ import net.minecraft.network.chat.TranslatableComponent;
 import space.plague.framinglib.util.ButtonTextureHolder;
 import space.plague.framinglib.util.references.TranslationReferences;
 
+import java.util.Optional;
+
 public class LayoutResetButtonElement extends AbstractLayoutTextureButtonElement {
 
     public LayoutResetButtonElement(FramingLayoutElement layoutElement, int offsetX, int offsetY, Component name, ButtonTextureHolder buttonTextureHolder) {
         super(layoutElement, offsetX, offsetY, name, buttonTextureHolder);
+        setTooltipSupplier(
+            () -> Optional.of(TranslationReferences.CONFIG_LAYOUT_ELEMENT_RESET)
+        );
     }
 
     @Override

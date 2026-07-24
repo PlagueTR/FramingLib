@@ -1,13 +1,13 @@
 package space.plague.framinglib.impl;
 
 import com.mojang.blaze3d.platform.NativeImage;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Matrix4f;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
@@ -83,7 +83,7 @@ public class TextureInfoImpl implements TextureInfo {
             height = region.height;
         }
 
-        textureUV = TextureUV.create(atlasWidth, atlasHeight, region);
+        textureUV = TextureUV.createFromRegion(atlasWidth, atlasHeight, region);
     }
 
     @Override
@@ -147,10 +147,14 @@ public class TextureInfoImpl implements TextureInfo {
                 nativeImage.close();
             }
             catch (Exception e) {
+                maskFailed = true;
+
                 throw new RuntimeException("Couldn't load resource " + texture, e);
             }
         }
         catch (IOException e) {
+            maskFailed = true;
+
             throw new RuntimeException("Couldn't load resource " + texture, e);
         }
 
@@ -170,6 +174,7 @@ public class TextureInfoImpl implements TextureInfo {
     @Override
     public void render(PoseStack poseStack, int x, int y, Color color) {
         RenderSystem.enableBlend();
+        RenderSystem.enableTexture();
         Tesselator tesselator = Tesselator.getInstance();
         BufferBuilder buffer = tesselator.getBuilder();
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();

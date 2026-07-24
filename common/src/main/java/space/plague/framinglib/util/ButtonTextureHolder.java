@@ -12,6 +12,7 @@ import space.plague.framinglib.api.util.Color;
 import space.plague.framinglib.api.util.TextureInfo;
 
 @Environment(EnvType.CLIENT)
+@SuppressWarnings("unused")
 public class ButtonTextureHolder {
 
     public enum ButtonState {

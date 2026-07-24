@@ -34,12 +34,12 @@ public class LayoutElementBuilderImpl implements LayoutElementBuilder {
     private Supplier<AlignmentSizeOffset> defaultValue = null;
 
     private boolean showName = true;
-    private Alignments nameAlignment = Alignments.create(Alignments.HAlignment.MIDDLE, Alignments.VAlignment.CENTER);
+    private Alignments nameAlignment = Alignments.create(Alignments.HAlignment.LEFT, Alignments.VAlignment.TOP);
 
-    private boolean showIcon = false;
+    private boolean showIcon = true;
     @Nullable
     private TextureInfo iconInfo;
-    private Alignments iconAlignment = Alignments.create(Alignments.HAlignment.MIDDLE, Alignments.VAlignment.CENTER);
+    private Alignments iconAlignment = Alignments.create(Alignments.HAlignment.LEFT, Alignments.VAlignment.TOP);
 
     @NotNull
     private Color color = Color.create(196, 196, 196);

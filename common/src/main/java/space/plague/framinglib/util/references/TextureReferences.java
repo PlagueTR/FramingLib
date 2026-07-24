@@ -14,6 +14,7 @@ import space.plague.framinglib.util.NineSliceButtonTextureHolder;
 import java.awt.Rectangle;
 
 @Environment(EnvType.CLIENT)
+@SuppressWarnings("unused")
 public class TextureReferences {
 
     public static final ResourceLocation DEFAULT_BACKGROUND = Screen.BACKGROUND_LOCATION;

@@ -13,11 +13,11 @@ import java.awt.Rectangle;
 @SuppressWarnings("unused")
 public interface TextureUV {
 
-    static TextureUV create(int atlasWidth, int atlasHeight, @Nullable Rectangle region) {
+    static TextureUV createFromRegion(int atlasWidth, int atlasHeight, @Nullable Rectangle region) {
         return new TextureUVImpl(atlasWidth, atlasHeight, region);
     }
 
-    static TextureUV create(float u_min, float u_max, float v_min, float v_max) {
+    static TextureUV createFromUV(float u_min, float u_max, float v_min, float v_max) {
         return new TextureUVImpl(u_min, u_max, v_min, v_max);
     }
 

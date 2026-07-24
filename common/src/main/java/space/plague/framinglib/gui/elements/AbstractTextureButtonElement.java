@@ -80,7 +80,7 @@ public abstract class AbstractTextureButtonElement extends AbstractButton {
             }
 
             renderTextureButton(poseStack);
-            if (isHovered()) {
+            if (active && isHovered()) {
                 renderToolTip(poseStack, mouseX, mouseY);
             }
 

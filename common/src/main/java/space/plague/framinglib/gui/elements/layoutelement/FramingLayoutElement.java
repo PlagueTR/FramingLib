@@ -22,6 +22,7 @@ import space.plague.framinglib.api.util.TextureInfo;
 import space.plague.framinglib.gui.FramingLayoutConfigScreen;
 import space.plague.framinglib.util.ButtonTextureHolder;
 import space.plague.framinglib.util.MathUtils;
+import space.plague.framinglib.util.PositioningHelper;
 import space.plague.framinglib.util.references.TextureReferences;
 import space.plague.framinglib.util.references.TranslationReferences;
 
@@ -179,6 +180,10 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
                 customRenderingFunction.accept(poseStack, getValue());
             }
 
+            for (AbstractLayoutTextureButtonElement child : children) {
+                child.render(poseStack, mouseX, mouseY, partialTick);
+            }
+
         }
 
         this.narrate();
@@ -293,7 +298,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
             }
 
             if (addResetButton) {
-                resetButton = screen.addLayoutButton(new LayoutResetButtonElement(this, buttonsOffsetX, buttonsOffsetY, TranslationReferences.CONFIG_LAYOUT_ELEMENT_RESET, TextureReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER));
+                resetButton = new LayoutResetButtonElement(this, buttonsOffsetX, buttonsOffsetY, TranslationReferences.CONFIG_LAYOUT_ELEMENT_RESET, TextureReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER);
                 resetButton.setColor(color);
                 children.add(resetButton);
             }
@@ -364,7 +369,11 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
             boolean flag = this.clicked(mouseX, mouseY);
             if (flag) {
                 if (isAnyButtonsHovered()) {
-                    return false;
+                    for (AbstractLayoutTextureButtonElement buttonElement : children) {
+                        if (buttonElement.mouseClicked(mouseX, mouseY, button)) {
+                            return true;
+                        }
+                    }
                 }
                 this.onClick(mouseX, mouseY);
                 return true;
@@ -446,11 +455,11 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
     protected void updateValue() {
 
-        Alignments.HAlignment newHAlign;
-        int newX;
+        Alignments.HAlignment newHAlign = PositioningHelper.getHAlignment(x, width);
+        int newX = PositioningHelper.getOffsetX(x, width);
 
-        Alignments.VAlignment newVAlign;
-        int newY;
+        Alignments.VAlignment newVAlign = PositioningHelper.getVAlignment(y, height);
+        int newY = PositioningHelper.getOffsetY(y, height);
 
         int centerX = x + width / 2;
         int centerY = y + height / 2;
@@ -458,39 +467,12 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
         int screenCenterX = screen.width / 2;
         int screenCenterY = screen.height / 2;
 
-        if (centerX <= screen.width / 3) {
-            newHAlign = Alignments.HAlignment.LEFT;
-            newX = x;
-        }
-        else if (centerX >= (screen.width * 2) / 3)  {
-            newHAlign = Alignments.HAlignment.RIGHT;
-            newX = screen.width - x - width;
-        }
-        else {
-            newHAlign = Alignments.HAlignment.MIDDLE;
-            if (snapping && Math.abs(centerX - screenCenterX) <= screen.getSnappingThreshold()) {
+        if (snapping) {
+            if (Math.abs(centerX - screenCenterX) <= screen.getSnappingThreshold()) {
                 newX = 0;
             }
-            else {
-                newX = -((screen.width - width) / 2 - x);
-            }
-        }
-
-        if (centerY <= screen.height / 3) {
-            newVAlign = Alignments.VAlignment.TOP;
-            newY = y;
-        }
-        else if (centerY >= (screen.height * 2) / 3) {
-            newVAlign = Alignments.VAlignment.BOTTOM;
-            newY = screen.height - y - height;
-        }
-        else {
-            newVAlign = Alignments.VAlignment.CENTER;
-            if (snapping && Math.abs(centerY - screenCenterY) <= screen.getSnappingThreshold()) {
+            if (Math.abs(centerY - screenCenterY) <= screen.getSnappingThreshold()) {
                 newY = 0;
-            }
-            else {
-                newY = -((screen.height - height) / 2 - y);
             }
         }
 

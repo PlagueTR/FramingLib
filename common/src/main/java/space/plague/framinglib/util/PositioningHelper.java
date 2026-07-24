@@ -1,5 +1,6 @@
 package space.plague.framinglib.util;
 
+import com.mojang.blaze3d.platform.Window;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -10,9 +11,11 @@ import space.plague.framinglib.api.util.Alignments;
 
 @Environment(EnvType.CLIENT)
 public class PositioningHelper {
+    private static final Minecraft minecraft = Minecraft.getInstance();
+    private static final Window window = minecraft.getWindow();
 
     public static Alignments.HAlignment getHAlignment(int actualX, int scaledWidth) {
-        int windowWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+        int windowWidth = window.getGuiScaledWidth();
 
         int centerX = actualX + scaledWidth / 2;
 
@@ -26,7 +29,7 @@ public class PositioningHelper {
     }
 
     public static int getOffsetX(int actualX, int scaledWidth) {
-        int windowWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+        int windowWidth = window.getGuiScaledWidth();
 
         int centerX = actualX + scaledWidth / 2;
 
@@ -40,7 +43,7 @@ public class PositioningHelper {
     }
 
     public static Alignments.VAlignment getVAlignment(int actualY, int scaledHeight) {
-        int windowHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
+        int windowHeight = window.getGuiScaledHeight();
 
         int centerY = actualY + scaledHeight / 2;
 
@@ -54,7 +57,7 @@ public class PositioningHelper {
     }
 
     public static int getOffsetY(int actualY, int scaledHeight) {
-        int windowHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
+        int windowHeight = window.getGuiScaledHeight();
 
         int centerY = actualY + scaledHeight / 2;
 
@@ -68,7 +71,7 @@ public class PositioningHelper {
     }
 
     public static int getActualX(AlignmentSizeOffset alignmentSizeOffset) {
-        int windowWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+        int windowWidth = window.getGuiScaledWidth();
 
         int result = 0;
         switch(alignmentSizeOffset.getHAlignment()) {
@@ -88,7 +91,7 @@ public class PositioningHelper {
     }
 
     public static int getActualY(AlignmentSizeOffset alignmentSizeOffset) {
-        int windowHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
+        int windowHeight = window.getGuiScaledHeight();
 
         int result = 0;
 

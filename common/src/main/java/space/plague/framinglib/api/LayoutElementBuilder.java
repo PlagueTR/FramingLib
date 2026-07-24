@@ -11,7 +11,6 @@ import space.plague.framinglib.api.util.AlignmentSizeOffset;
 import space.plague.framinglib.api.util.Alignments;
 import space.plague.framinglib.api.util.Color;
 import space.plague.framinglib.api.util.TextureInfo;
-import space.plague.framinglib.gui.elements.layoutelement.FramingLayoutElement;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;

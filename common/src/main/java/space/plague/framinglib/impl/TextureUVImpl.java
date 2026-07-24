@@ -33,7 +33,7 @@ public class TextureUVImpl implements TextureUV {
         }
         else {
             this.u_min = (float) region.x / (float) atlasWidth;
-            this.u_max = (float) (region.x + region.width) / (float) atlasHeight;
+            this.u_max = (float) (region.x + region.width) / (float) atlasWidth;
             this.v_min = (float) region.y / (float) atlasHeight;
             this.v_max = (float) (region.y + region.height) / (float) atlasHeight;
         }

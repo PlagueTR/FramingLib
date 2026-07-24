@@ -1,14 +1,16 @@
-package space.plague.framinglib.impl;
+package space.plague.framinglib.util;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
+import space.plague.framinglib.impl.AlignmentSizeOffsetImpl;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 
 @Environment(EnvType.CLIENT)
-public class WindowResizeNotifier {
+public class DisplayResizeNotifier {
     private static final Set<AlignmentSizeOffsetImpl> ASO_REGISTRY = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
 
     public static void register(AlignmentSizeOffsetImpl alignmentSizeOffset) {

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import space.plague.framinglib.api.util.AlignmentSizeOffset;
 import space.plague.framinglib.api.util.Alignments;
 import space.plague.framinglib.util.PositioningHelper;
+import space.plague.framinglib.util.DisplayResizeNotifier;
 
 import java.util.Objects;
 
@@ -35,7 +36,7 @@ public class AlignmentSizeOffsetImpl implements AlignmentSizeOffset {
         this.scale = scale;
         this.alignment = alignment;
 
-        WindowResizeNotifier.register(this);
+        DisplayResizeNotifier.register(this);
     }
 
     public AlignmentSizeOffsetImpl(int actualX, int actualY, int width, int height, float scale) {
@@ -46,7 +47,7 @@ public class AlignmentSizeOffsetImpl implements AlignmentSizeOffset {
         this.scale = scale;
         this.alignment = Alignments.create(PositioningHelper.getHAlignment(actualX, (int) (width * scale)), PositioningHelper.getVAlignment(actualY, (int) (height * scale)));
 
-        WindowResizeNotifier.register(this);
+        DisplayResizeNotifier.register(this);
     }
 
     @Override
