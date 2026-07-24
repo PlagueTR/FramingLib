@@ -154,7 +154,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         if (this.visible) {
-            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height && !screen.isCurrentlyHoveringButtons();
+            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             if (this.wasHovered != this.isHovered() || isAnyButtonsHovered()) {
                 if (this.isHovered) {
                     if (this.isFocused()) {
@@ -354,7 +354,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (this.active && this.visible && this.isValidClickButton(button)) {
-            boolean flag = this.clicked(mouseX, mouseY) && !screen.isCurrentlyHoveringButtons();
+            boolean flag = this.clicked(mouseX, mouseY);
             if (flag) {
                 if (isAnyButtonsHovered()) {
                     return false;
@@ -373,17 +373,6 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
             isCurrentlySnappingHorizontally = false;
             isCurrentlySnappingVertically = false;
             return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (this.isValidClickButton(button)) {
-            if (screen.isCurrentlyHoveringButtons()) {
-                return false;
-            }
-            this.onDrag(mouseX, mouseY, dragX, dragY);
         }
         return false;
     }

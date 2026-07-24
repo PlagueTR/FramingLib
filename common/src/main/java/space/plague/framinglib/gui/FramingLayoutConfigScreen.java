@@ -153,10 +153,6 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
         return SNAPPING_THRESHOLD;
     }
 
-    public boolean isCurrentlyHoveringButtons() {
-        return (backButton != null && backButton.isHovered()) || (saveButton != null && saveButton.isHovered()) || (resetAllButton != null && resetAllButton.isHovered());
-    }
-
     public void setTooltip(Component tooltip) {
         this.tooltip = tooltip;
     }
@@ -319,52 +315,47 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
     protected void init() {
         super.init();
 
-        if (!getLayoutElementList().isEmpty()) {
-            for (LayoutElement layoutElement : getLayoutElementList()) {
-                if (layoutElement instanceof FramingLayoutElement) {
-                    this.addWidget((FramingLayoutElement) layoutElement);
-                }
-            }
-        }
-
-        int buttonWidths = TextureReferences.DENY_BUTTON_HOLDER.getDisabled().getWidth() + TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getWidth() + TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getWidth() + PADDING * 3;
-
-        int buttonsX = 0;
-        switch (buttonsAlignments.getHAlignment()) {
-            case LEFT:
-                buttonsX = PADDING;
-                break;
-            case RIGHT:
-                buttonsX = width - buttonWidths;
-                break;
-            default:
-                buttonsX = (width - buttonWidths) / 2;
-        }
-        int buttonsY = 0;
-        switch (buttonsAlignments.getVAlignment()) {
-            case TOP:
-                buttonsY = PADDING;
-                break;
-            case BOTTOM:
-                buttonsY = height - Math.max(TextureReferences.DENY_BUTTON_HOLDER.getDisabled().getHeight(), Math.max(TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getHeight(), TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight())) - PADDING;
-                break;
-            default:
-                buttonsY = (height - Math.max(TextureReferences.DENY_BUTTON_HOLDER.getDisabled().getHeight(), Math.max(TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getHeight(), TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight()))) / 2;
-        }
-
-        for (LayoutElement layoutElement : getLayoutElementList()) {
-            if (layoutElement instanceof FramingLayoutElement) {
-                ((FramingLayoutElement) layoutElement).init();
-            }
-        }
-
         if (isShowSavingButtons()) {
+            int buttonWidths = TextureReferences.DENY_BUTTON_HOLDER.getDisabled().getWidth() + TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getWidth() + TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getWidth() + PADDING * 3;
+
+            int buttonsX = 0;
+            switch (buttonsAlignments.getHAlignment()) {
+                case LEFT:
+                    buttonsX = PADDING;
+                    break;
+                case RIGHT:
+                    buttonsX = width - buttonWidths;
+                    break;
+                default:
+                    buttonsX = (width - buttonWidths) / 2;
+            }
+            int buttonsY = 0;
+            switch (buttonsAlignments.getVAlignment()) {
+                case TOP:
+                    buttonsY = PADDING;
+                    break;
+                case BOTTOM:
+                    buttonsY = height - Math.max(TextureReferences.DENY_BUTTON_HOLDER.getDisabled().getHeight(), Math.max(TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getHeight(), TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight())) - PADDING;
+                    break;
+                default:
+                    buttonsY = (height - Math.max(TextureReferences.DENY_BUTTON_HOLDER.getDisabled().getHeight(), Math.max(TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getHeight(), TextureReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight()))) / 2;
+            }
+
             this.addButton(backButton = new FramingLayoutConfigBackButton(this, buttonsX, buttonsY, isEdited()? TranslationReferences.CONFIG_CANCEL_DISCARD : TranslationReferences.CONFIG_CANCEL, TextureReferences.DENY_BUTTON_HOLDER));
             buttonsX += TextureReferences.DENY_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
             this.addButton(saveButton = new FramingLayoutConfigSaveButton(this, buttonsX, buttonsY, TranslationReferences.CONFIG_SAVE, TextureReferences.ACCEPT_BUTTON_HOLDER));
             saveButton.active = isEdited();
             buttonsX += TextureReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
             this.addButton(resetAllButton = new FramingLayoutConfigResetAllButton(this, buttonsX, buttonsY, TranslationReferences.CONFIG_RESET_ALL, TextureReferences.RESET_BUTTON_HOLDER));
+        }
+
+        if (!getLayoutElementList().isEmpty()) {
+            for (LayoutElement layoutElement : getLayoutElementList()) {
+                if (layoutElement instanceof FramingLayoutElement) {
+                    this.addWidget((FramingLayoutElement) layoutElement);
+                    ((FramingLayoutElement) layoutElement).init();
+                }
+            }
         }
 
         if (afterInitConsumer != null) {
