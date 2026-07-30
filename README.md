@@ -93,6 +93,9 @@ Developer documentation can be accessed [here][Developer Documentation]
 
 ✅ - Supported ⏳ - Planned ⏳ - Not supported
 
+Notes:
+Latest mod version is written in parentheses
+
 [Fabric]: https://fabricmc.net
 [Quilt]: https://quiltmc.org
 [Forge]: https://minecraftforge.net
