@@ -191,7 +191,7 @@ tasks.register('curseForge', net.darkhax.curseforgegradle.TaskPublishCurseForge)
     def document = parser.parse(rootProject.file("CHANGELOG.md").text)
     def markdown = renderer.render(document)
 
-    def targetTaskNName = (rootProject.architectury_loom_id == 'dev.architectury.loom-no-remap') ? 'shadowJar' : 'remapJar'
+    def targetTaskName = (rootProject.architectury_loom_id == 'dev.architectury.loom-no-remap') ? 'shadowJar' : 'remapJar'
     def targetJarTask = project.tasks.named(targetTaskName)
 
     def mainFile = upload("${rootProject.curseforge_id}" as Integer, targetJarTask)
