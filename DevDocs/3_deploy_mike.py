@@ -9,22 +9,20 @@ def deploy_version():
 	cmd = ["mike", "deploy", version]
 	cmd_str = ' '.join(cmd)
 
-	print(f"\nRunning command: {cmd_str}")
+	print(f'\nRunning command: "{cmd_str}"')
 
-	common.run_powershell_live(
-		f". '{common.VENV_ACTIVATION}'; "
-		f"cd '{common.DOCS_DIR}'; "
-		f"{cmd_str}"
-	)
+	common.run_shell_live([
+		f'cd "{common.DOCS_DIR}"',
+		f'{cmd_str}'
+	])
 	print("\nSuccess: Version successfully deployed.")
 
 def set_default_version():
 	print("\nRetrieving available deployed versions from mike...\n")
-	output_lines = common.run_powershell_live(
-		f". '{common.VENV_ACTIVATION}'; "
-        f"cd '{common.DOCS_DIR}'; "
-		"mike list", 
-		capture_output=True
+	output_lines = common.run_shell_live([
+        f'cd "{common.DOCS_DIR}"',
+		"mike list"
+        ],capture_output=True
 	)
 
 	lines = [line.strip() for line in output_lines if line.strip()]
@@ -48,7 +46,7 @@ def set_default_version():
 	distinct_targets = list(dict.fromkeys(available_targets))
 
 	for idx, target in enumerate(distinct_targets, start=1):
-		print(f" [{idx}] {target}")
+		print(f' ["{idx}"] "{target}"')
 
 	choice = input("\nSelect a number to set as the default landing version: ").strip()
 	choice_idx = int(choice) - 1
@@ -59,14 +57,13 @@ def set_default_version():
 
 	cmd = ["mike", "set-default", selected_version]
 	cmd_str = ' '.join(cmd)
-	
-	print(f"\nRunning command: {cmd_str}")
-	
-	common.run_powershell_live(
-		f". '{common.VENV_ACTIVATION}'; "
-        f"cd '{common.DOCS_DIR}'; "
-		f"{cmd_str}"
-	)
+
+	print(f'\nRunning command: "{cmd_str}"')
+
+	common.run_shell_live([
+        f'cd "{common.DOCS_DIR}"',
+		f'{cmd_str}'
+    ])
 	print("Success: Default version successfully changed.")
 
 def main():

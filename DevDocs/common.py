@@ -1,7 +1,6 @@
 import sys
 import subprocess
-import ctypes
-from ctypes import wintypes
+import os
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).parent.resolve()
@@ -12,62 +11,60 @@ REQUIREMENTS_FILE = ROOT_DIR / "requirements.txt"
 MIN_VERSION = (3, 10, 11)
 MIN_VERSION_STR = ".".join(map(str, MIN_VERSION))
 
-VENV_ACTIVATION = VENV_DIR / "Scripts" / "activate.ps1"
+if os.name == "nt":
+    SHELL_EXEC = ["cmd.exe", "/c"]
+    VENV_ACTIVATION = VENV_DIR / "Scripts" / "activate.bat"
+    CMD_CONNECTOR = " && "
+    ACTIVATE_COMMAND = f'call "{VENV_ACTIVATION}"'
+else:
+    SHELL_EXEC = ["/bin/sh", "-c"]
+    VENV_ACTIVATION = VENV_DIR / "bin" / "activate"
+    CMD_CONNECTOR = " && "
+    ACTIVATE_COMMAND = f'. "{VENV_ACTIVATION}"'
 
-class JOBOBJECT_EXTENDED_LIMIT_INFORMATION(ctypes.Structure):
-    _fields_ = [
-        ("BasicLimitInformation", wintypes.DWORD * 12),
-        ("IoInfo", wintypes.DWORD * 6),
-        ("ProcessMemoryLimit", ctypes.c_size_t),
-        ("JobMemoryLimit", ctypes.c_size_t),
-        ("PeakProcessMemoryLimit", ctypes.c_size_t),
-        ("PeakJobMemoryLimit", ctypes.c_size_t),
-    ]
+def run_shell_live(command_payload:list[str], capture_output=False):
 
-JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x2000
+    payload_str = CMD_CONNECTOR.join(command_payload)
+    full_command_str = f"{ACTIVATE_COMMAND}{CMD_CONNECTOR}{payload_str}"
 
-def run_powershell_live(command_str, capture_output=False):
-	job = ctypes.windll.kernel32.CreateJobObjectW(None, None)
-	limits = JOBOBJECT_EXTENDED_LIMIT_INFORMATION()
-	limits.BasicLimitInformation[4] = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+    spawn_args = SHELL_EXEC + [full_command_str]
 
-	ctypes.windll.kernel32.SetInformationJobObject(
-        job, 
-        9, # JobObjectExtendedLimitInformation constant
-        ctypes.byref(limits), 
-        ctypes.sizeof(limits)
-    )
+    captured_lines = []
 
-	process = subprocess.Popen(
-		["powershell", "-ExecutionPolicy", "Bypass", "-Command", command_str], 
-		stdout=subprocess.PIPE
-	)
+    process = None
+    try:
+        process = subprocess.Popen(
+            spawn_args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding='utf-8',
+            errors='replace'
+        )
 
-	ctypes.windll.kernel32.AssignProcessToJobObject(job, int(process._handle))
+        assert process.stdout is not None
 
-	captured_lines = []
+        while True:
+            line = process.stdout.readline()
+            if not line and process.poll() is not None:
+                break
+            if line:
+                if capture_output:
+                    captured_lines.append(line)
+                else:
+                    print(line, end='')
 
-	try:
-		while True:
-			raw_line = process.stdout.readline()
-			if not raw_line and process.poll() is not None:
-				break
-			if raw_line:
-				decoded_line = raw_line.decode('utf-8', errors='replace')
-				if capture_output:
-					captured_lines.append(decoded_line)
-				else:
-					print(decoded_line, end='')
-	except KeyboardInterrupt:
-		print("\nProcess interrupted by user. Stopping...")
-	finally:
-		if process.poll() is None:
-			process.terminate()
-			process.wait()
-		ctypes.windll.kernel32.CloseHandle(job)
+    except KeyboardInterrupt:
+        print("\nProcess interrupted by user. Stopping...")
 
-	if process.returncode != 0:
-		print(f"\nCommand failed with exit code: {process.returncode}")
-		sys.exit(process.returncode)
+    finally:
+        if process is not None and process.poll() is None:
+            process.terminate()
+            process.wait()
 
-	return captured_lines if capture_output else None
+    return_code = process.returncode if process else -1
+    if return_code != 0:
+        print(f"\nCommand failed with exit code: {return_code}")
+        sys.exit(return_code)
+
+    return captured_lines if capture_output else None
