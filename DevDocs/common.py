@@ -12,7 +12,7 @@ MIN_VERSION = (3, 10, 11)
 MIN_VERSION_STR = ".".join(map(str, MIN_VERSION))
 
 if os.name == "nt":
-    SHELL_EXEC = ["cmd.exe", "/c"]
+    SHELL_EXEC = "cmd.exe /c"
     VENV_ACTIVATION = VENV_DIR / "Scripts" / "activate.bat"
     CMD_CONNECTOR = " && "
     ACTIVATE_COMMAND = f'call "{VENV_ACTIVATION}"'
@@ -27,7 +27,10 @@ def run_shell_live(command_payload:list[str], capture_output=False):
     payload_str = CMD_CONNECTOR.join(command_payload)
     full_command_str = f"{ACTIVATE_COMMAND}{CMD_CONNECTOR}{payload_str}"
 
-    spawn_args = SHELL_EXEC + [full_command_str]
+    if os.name == "nt":
+        spawn_args = f'{SHELL_EXEC} "{full_command_str}"'
+    else:
+        spawn_args = SHELL_EXEC + [full_command_str]
 
     captured_lines = []
 
