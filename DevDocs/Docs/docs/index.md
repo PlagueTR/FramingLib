@@ -1,11 +1,7 @@
-# Home
+# FramingLib Developer Documentation
 
-TODO: fill this up
+Welcome to FramingLib documentation!
 
-## Heh
+You can use the table of contents in the sidebar to easily access any section of the documentation.
 
-Lol
-
-## Heheh
-
-Still learning
+You can also use the search function in the top-right corner.

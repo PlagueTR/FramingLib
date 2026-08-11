@@ -11,9 +11,27 @@ remote_branch: gh-pages
 
 nav:
   - Home: 'index.md'
-  - Getting Started:
-    - Installation: 'GettingStarted/installation.md'
-    - Lmao: 'GettingStarted/lmao.md'
+  - Setting-up FramingLib: 'SettingUp/setting_up_framinglib.md'
+  - Using FramingLib:
+    - Creating a Layout Config Screen: 'Using/creating_a_layout_config_screen.md'
+    - Creating a Layout Element: 'Using/creating_a_layout_element.md'
+    - Saving the Config: 'Using/saving_the_config.md'
+  - Integration:
+    - ModMenu Integration: 'Integration/modmenu_integration.md'
+    - Forge/NeoForge Integration: 'Integration/forge_integration.md'
+  - API Reference:
+    - Config:
+      - LayoutConfigScreen: 'APIReference/layout_config_screen.md'
+      - LayoutConfigScreenBuilder: 'APIReference/layout_config_screen_builder.md'
+      - LayoutElement: 'APIReference/layout_element.md'
+      - LayoutElementBuilder: 'APIReference/layout_element_builder.md'
+    - Positioning:
+      - Alignments: 'APIReference/alignments.md'
+      - AlignmentSizeOffset: 'APIReference/alignment_size_offset.md'
+    - Rendering:
+      - Color: 'APIReference/color.md'
+      - TextureInfo: 'APIReference/texture_info.md'
+      - TextureUV: 'APIReference/texture_uv.md'
 
 not_in_nav: |
   /stylesheets
@@ -83,6 +101,15 @@ extra_javascript:
 extra:
   version:
     provider: mike
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
 
 plugins:
   - search:

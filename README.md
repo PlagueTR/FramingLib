@@ -42,7 +42,7 @@ A more practical example, moving chat around:
 
 ### 📖 For Players
 
-> **⚠️️** This is a library mod, and does nothing on it's own.
+> **⚠️️** This is a library mod, and does nothing on its own.
 
 Put the jar file in your mods folder and you're good to go!
 
@@ -54,8 +54,8 @@ Developer documentation can be accessed [here][Developer Documentation]
 
 ## 🚀 Supported Versions
 
-| Minecraft |  Fabric  |  Quilt   |  Forge   | NeoForge |
-|:---------:|:--------:|:--------:|:--------:|:--------:|
+| Minecraft |  Fabric   |   Quilt   |   Forge   | NeoForge |
+|:---------:|:---------:|:---------:|:---------:|:--------:|
 | **26.2**  |    ⏳     |    ⏳     |    ⏳     |    ⏳     |
 |  26.1.2   |    ⏳     |    ⏳     |    ⏳     |    ⏳     |
 |  26.1.1   |    ⏳     |    ⏳     |    ⏳     |    ⏳     |
@@ -89,7 +89,7 @@ Developer documentation can be accessed [here][Developer Documentation]
 | **1.18**  |    ⏳     |    ⏳     |    ⏳     |    ❌     |
 |  1.17.1   |    ⏳     |    ⏳     |    ⏳     |    ❌     |
 | **1.17**  |    ⏳     |    ⏳     |    ⏳     |    ❌     |
-|  1.16.5   | ✅(1.0.0) | ✅(1.0.0) | ✅(1.0.0) |    ❌     |
+|  1.16.5   | ✅(1.0.1) | ✅(1.0.1) | ✅(1.0.1) |    ❌     |
 
 ✅ - Supported ⏳ - Planned ⏳ - Not supported
 

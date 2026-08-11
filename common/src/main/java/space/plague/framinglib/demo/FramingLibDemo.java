@@ -32,7 +32,7 @@ public class FramingLibDemo {
         LayoutElementBuilder layoutElement1 = builder.startLayoutElement(
             element1,
             TranslationReferences.DEMO_ELEMENT_1)
-            .setDefaultAlignmentSizeOffset(element1_default)
+            .setDefaultValue(element1_default)
             .setShowName(false)
             .setIcon(GraphicsReferences.DEMO_ELEMENT_ICON)
             .setIconAlignment(Alignments.create(Alignments.HAlignment.MIDDLE, Alignments.VAlignment.CENTER))
@@ -46,7 +46,7 @@ public class FramingLibDemo {
         LayoutElementBuilder layoutElement2 = builder.startLayoutElement(
             element2,
             TranslationReferences.DEMO_ELEMENT_2)
-            .setDefaultAlignmentSizeOffset(element2_default)
+            .setDefaultValue(element2_default)
             .setNameAlignment(Alignments.create(Alignments.HAlignment.MIDDLE, Alignments.VAlignment.CENTER))
             .setColor(Color.create("#9e34eb"))
             ;
