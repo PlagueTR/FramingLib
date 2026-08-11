@@ -82,6 +82,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
     private boolean isCurrentlySnappingHorizontally = false;
     private boolean isCurrentlySnappingVertically = false;
+    @Nullable
     private Consumer<AlignmentSizeOffset> saveConsumer = null;
 
     public FramingLayoutElement(AlignmentSizeOffset originalIn, Component name, @Nullable Supplier<AlignmentSizeOffset> defaultValue) {
@@ -350,7 +351,9 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
         value.setOffsetX(sx);
         value.setOffsetY(sy);
         value.setAlignment(sa);
-        saveConsumer.accept(value);
+        if (this.saveConsumer != null) {
+            this.saveConsumer.accept(value);
+        }
         value.setIsEditing(true);
     }
 
