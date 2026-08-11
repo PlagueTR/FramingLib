@@ -30,7 +30,6 @@ import space.plague.framinglib.util.references.TranslationReferences;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
@@ -82,8 +81,6 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
     private boolean isCurrentlySnappingHorizontally = false;
     private boolean isCurrentlySnappingVertically = false;
-    @Nullable
-    private Consumer<AlignmentSizeOffset> saveConsumer = null;
 
     public FramingLayoutElement(AlignmentSizeOffset originalIn, Component name, @Nullable Supplier<AlignmentSizeOffset> defaultValue) {
         super(originalIn.getActualX(), originalIn.getActualY(), originalIn.getWidth(), originalIn.getHeight(), name);
@@ -98,10 +95,6 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
         this.draggedX = x;
         this.draggedY = y;
-    }
-
-    public void setSaveConsumer(Consumer<AlignmentSizeOffset> saveConsumer) {
-        this.saveConsumer = saveConsumer;
     }
 
     public void setShowName(boolean showName) {
@@ -351,9 +344,6 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
         value.setOffsetX(sx);
         value.setOffsetY(sy);
         value.setAlignment(sa);
-        if (this.saveConsumer != null) {
-            this.saveConsumer.accept(value);
-        }
         value.setIsEditing(true);
     }
 

@@ -21,7 +21,6 @@ import space.plague.framinglib.gui.elements.layoutelement.FramingLayoutElement;
 import space.plague.framinglib.util.references.GraphicsReferences;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
@@ -57,7 +56,6 @@ public class LayoutElementBuilderImpl implements LayoutElementBuilder {
     private boolean showButtons = true;
     @NotNull
     private Alignments buttonsAlignment = GraphicsReferences.DEFAULT_LAYOUT_ELEMENT_BUTTONS_ALIGNMENT;
-    private Consumer<AlignmentSizeOffset> saveConsumer = null;
 
     public LayoutElementBuilderImpl(@NotNull AlignmentSizeOffset alignmentOffsetIn, @NotNull Component name) {
         this.original = alignmentOffsetIn;
@@ -73,12 +71,6 @@ public class LayoutElementBuilderImpl implements LayoutElementBuilder {
     @Override
     public LayoutElementBuilder setDefaultValue(AlignmentSizeOffset defaultValue) {
         this.defaultValue = () -> defaultValue;
-        return this;
-    }
-
-    @Override
-    public LayoutElementBuilder setSaveConsumer(Consumer<AlignmentSizeOffset> saveConsumer) {
-        this.saveConsumer = saveConsumer;
         return this;
     }
 
@@ -178,8 +170,6 @@ public class LayoutElementBuilderImpl implements LayoutElementBuilder {
     @Override
     public LayoutElement build() {
         FramingLayoutElement element = new FramingLayoutElement(original, name, defaultValue);
-
-        element.setSaveConsumer(saveConsumer);
 
         element.setShowName(showName);
         element.setNameAlignment(nameAlignment);

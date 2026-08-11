@@ -89,7 +89,7 @@ Developer documentation can be accessed [here][Developer Documentation]
 | **1.18**  |    ⏳     |    ⏳     |    ⏳     |    ❌     |
 |  1.17.1   |    ⏳     |    ⏳     |    ⏳     |    ❌     |
 | **1.17**  |    ⏳     |    ⏳     |    ⏳     |    ❌     |
-|  1.16.5   | ✅(1.0.1) | ✅(1.0.1) | ✅(1.0.1) |    ❌     |
+|  1.16.5   | ✅(1.0.2) | ✅(1.0.2) | ✅(1.0.2) |    ❌     |
 
 ✅ - Supported ⏳ - Planned ⏳ - Not supported
 

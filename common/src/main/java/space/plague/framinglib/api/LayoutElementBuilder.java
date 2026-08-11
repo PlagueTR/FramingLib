@@ -13,7 +13,6 @@ import space.plague.framinglib.api.util.Color;
 import space.plague.framinglib.api.util.TextureInfo;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
@@ -22,8 +21,6 @@ public interface LayoutElementBuilder {
 
     LayoutElementBuilder setDefaultValue(Supplier<AlignmentSizeOffset> defaultValue);
     LayoutElementBuilder setDefaultValue(AlignmentSizeOffset defaultValue);
-
-    LayoutElementBuilder setSaveConsumer(Consumer<AlignmentSizeOffset> saveConsumer);
 
     LayoutElementBuilder setShowName(boolean showName);
     LayoutElementBuilder setNameAlignment(@NotNull Alignments nameAlignment);
