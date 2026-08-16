@@ -14,8 +14,9 @@ nav:
   - Setting-up FramingLib: 'SettingUp/setting_up_framinglib.md'
   - Using FramingLib:
     - Creating a Layout Config Screen: 'Using/creating_a_layout_config_screen.md'
+    - Handling Alignment Size Offset: 'Using/handling_alignment_size_offset.md'
     - Creating a Layout Element: 'Using/creating_a_layout_element.md'
-    - Saving the Config: 'Using/saving_the_config.md'
+    - Saving and Loading the Config: 'Using/saving_and_loading_the_config.md'
   - Integration:
     - ModMenu Integration: 'Integration/modmenu_integration.md'
     - Forge/NeoForge Integration: 'Integration/forge_integration.md'
@@ -36,6 +37,7 @@ nav:
 not_in_nav: |
   /stylesheets
   /javascripts
+  /img
 
 draft_docs: |
   drafts/
@@ -106,6 +108,7 @@ markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
+      linenums: true
       pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets

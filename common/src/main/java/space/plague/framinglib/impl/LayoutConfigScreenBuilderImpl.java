@@ -36,7 +36,7 @@ public class LayoutConfigScreenBuilderImpl implements LayoutConfigScreenBuilder 
 
     private boolean doesShowResetButton = true;
 
-    private Consumer<Screen> afterInitConsumer = screen -> {};
+    private Consumer<Screen> afterInitConsumer = null;
 
     private ResourceLocation backgroundTexture = GraphicsReferences.DEFAULT_BACKGROUND;
     private boolean transparentBackground = false;

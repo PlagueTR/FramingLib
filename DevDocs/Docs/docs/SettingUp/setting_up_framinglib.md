@@ -1,11 +1,10 @@
-
 # Setting-up FramingLib
 
 ## Adding Via Gradle
 
 Add the Modrinth Maven repository to your `build.gradle` file:
 
-```groovy
+```groovy title="build.gradle"
 repositories {
     maven { url = "https://api.modrinth.com/maven" }
 }
@@ -13,7 +12,7 @@ repositories {
 
 Then add the library to your dependencies in `build.gradle` file:
 
-```groovy hl_lines="4"
+```groovy title="build.gradle" hl_lines="4"
 dependencies {
     // Your other dependencies
 
@@ -30,7 +29,7 @@ dependencies {
 
 `build.gradle`
 
-```groovy hl_lines="10"
+```groovy title="build.gradle" hl_lines="10"
 repositories {
     maven { url = "https://api.modrinth.com/maven" }
 }
@@ -44,11 +43,24 @@ dependencies {
 }
 ```
 
+Also add the library as a dependency in `fabric.mod.json`:
+
+```json title="src/main/resources/fabric.mod.json" hl_lines="7"
+{
+    ...
+    "depends": {
+        "fabricloader": ">=0.19.3",
+        "minecraft": "~1.16.5",
+        "java": ">=8",
+        "framinglib": ">=1.0.0"
+    },
+    ...
+}
+```
+
 ### Forge Setup
 
-`build.gradle`
-
-```groovy hl_lines="10"
+```groovy title="build.gradle" hl_lines="10"
 repositories {
     maven { url = "https://api.modrinth.com/maven" }
 }
@@ -62,6 +74,18 @@ dependencies {
 }
 ```
 
+Also add the library as a dependency in `mods.toml`:
+
+```toml title="src/main/resources/META-INF/mods.toml" hl_lines="2-7"
+...
+[[dependencies.example_mod]]
+modId = "framinglib"
+mandatory = true
+versionRange = "[1.0.0,)"
+ordering = "NONE"
+side = "CLIENT"
+```
+
 ## Tip: Dependency Properties
 
 Simplify version updates by managing the version string inside your `gradle.properties` file.
@@ -70,7 +94,7 @@ Simplify version updates by managing the version string inside your `gradle.prop
 
 Add this line to your `gradle.properties` file:
 
-```properties
+```properties title="gradle.properties"
 framinglib_version = 1.0.0+1.16.5
 ```
 
@@ -78,7 +102,7 @@ framinglib_version = 1.0.0+1.16.5
 
 Update your `build.gradle` file to reference the property:
 
-```groovy hl_lines="6 8"
+```groovy title="build.gradle" hl_lines="6 8"
 dependencies {
     // Your other dependencies
 

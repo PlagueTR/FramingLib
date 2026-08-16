@@ -6,7 +6,7 @@ To create a layout config screen, you must use the layout config screen builder.
 
 Instantiate a new `LayoutConfigScreenBuilder` by calling the `create()` method.
 
-```java
+```java title="java"
 LayoutConfigScreenBuilder configBuilder = LayoutConfigScreenBuilder.create();
 ```
 
@@ -14,21 +14,21 @@ LayoutConfigScreenBuilder configBuilder = LayoutConfigScreenBuilder.create();
 
 Chain methods together to define the screen's core properties, such as the parent screen and the title.
 
-```java
+```java title="java"
 configBuilder
     .setParentScreen(Minecraft.getInstance().screen)
     .setTitle(new TranslatableComponent("text.example_mod.config_title"));
 ```
 
-- **Parent Screen**: the screen to be opened when the user closes the layout config screen. Pass the currently active screen for most standard use cases.
+- **Parent Screen**: The screen to be opened when the user closes the layout config screen. Pass the currently active screen for most standard use cases.
 
 - **Title**: Automatically translated based on the user's selected language. Ensure you add the corresponding translation key to your mod's language `.json` files.
 
-## Building the Screeen
+## Building the Screen
 
 You can build the layout config screen using `LayoutConfigScreenBuilder.build()`.
 
-```java
+```java title="java"
 Screen layoutConfigScreen = configBuilder.build();
 ```
 
