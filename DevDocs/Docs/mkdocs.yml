@@ -4,7 +4,7 @@ site_url: https://plaguetr.github.io/FramingLib/
 copyright: 2026 Plague
 
 repo_url: https://github.com/PlagueTR/FramingLib/
-edit_uri: blob/main/FramingLibDocs/Docs/docs
+edit_uri: blob/main/DevDocs/Docs/docs
 
 remote_name: origin
 remote_branch: gh-pages
