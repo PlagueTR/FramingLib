@@ -93,8 +93,8 @@ Developer documentation can be accessed [here][Developer Documentation]
 
 ✅ - Supported ⏳ - Planned ⏳ - Not supported
 
-Notes:<br>
-Latest mod version is written in parentheses
+Notes:
+- Latest mod version is written in parentheses
 
 [Fabric]: https://fabricmc.net
 [Quilt]: https://quiltmc.org
