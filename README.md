@@ -10,7 +10,7 @@ A lightweight, client-sided configuration screen library for creating interactiv
 
 This is a client-side configuration screen library for creating draggable HUD layout screens.
 
-It allows developers to create configuration screens with interactive, draggable elements to make positioning their HUD/GUI elements easier for the player.
+It allows developers to create configuration screens with interactive, draggable elements to make positioning their HUD/GUI elements easier for the player.<br>
 This is not a complete configuration API, it is simply for creating configuration screens.
 
 Basically, this is for other mods that rely on it to work.
@@ -93,8 +93,8 @@ Developer documentation can be accessed [here][Developer Documentation]
 
 ✅ - Supported ⏳ - Planned ⏳ - Not supported
 
-Notes:
-- Latest mod version is written in parentheses
+Notes:<br>
+Latest mod version is written in parentheses
 
 [Fabric]: https://fabricmc.net
 [Quilt]: https://quiltmc.org
