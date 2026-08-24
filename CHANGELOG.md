@@ -1,3 +1,3 @@
-**1.0.8**:
+**1.0.9**:
 
-- Narration Fix for Minecraft 1.18
+- Narration Fix for Minecraft 1.18.1
