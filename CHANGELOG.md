@@ -1,3 +1,3 @@
-**1.0.4**:
+**1.0.5**:
 
-- Support for Minecraft 1.18
+- Support for Minecraft 1.18.1
