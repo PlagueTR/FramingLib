@@ -1,3 +1,3 @@
-**1.0.7**:
+**1.0.8**:
 
-- Fix Narration for Layout Element Buttons (Element Reset Button)
+- Narration Fix for Minecraft 1.18
