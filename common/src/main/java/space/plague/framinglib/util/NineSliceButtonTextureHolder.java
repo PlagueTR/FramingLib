@@ -2,16 +2,14 @@ package space.plague.framinglib.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.math.Matrix4f;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureManager;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -54,9 +52,8 @@ public class NineSliceButtonTextureHolder {
         RenderSystem.enableBlend();
         Tesselator tesselator = Tesselator.getInstance();
         BufferBuilder buffer = tesselator.getBuilder();
-        TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
-        buffer.begin(7, DefaultVertexFormat.POSITION_TEX_COLOR);
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         Matrix4f matrix = poseStack.last().pose();
 
         float r = color.getRedFloat();
@@ -67,7 +64,7 @@ public class NineSliceButtonTextureHolder {
         TextureInfo textureInfo = toDraw.getTextureInfos()[0][0];
         TextureUV textureUV = textureInfo.getUV();
 
-        textureManager.bind(textureInfo.getTexture());
+        RenderSystem.setShaderTexture(0, textureInfo.getTexture());
 
         buffer.vertex(matrix, x, y + textureInfo.getHeight(), 0.0f).uv(textureUV.getUMin(), textureUV.getVMax()).color(r, g, b, a).endVertex();
         buffer.vertex(matrix, x + textureInfo.getWidth(), y + textureInfo.getHeight(), 0.0f).uv(textureUV.getUMax(), textureUV.getVMax()).color(r, g, b, a).endVertex();

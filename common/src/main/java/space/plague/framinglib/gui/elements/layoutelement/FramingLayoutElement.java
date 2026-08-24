@@ -7,8 +7,9 @@ import net.fabricmc.api.Environment;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -76,7 +77,6 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
     private final List<AbstractLayoutTextureButtonElement> children = new ArrayList<>();
 
-    private boolean wasHovered = false;
     double draggedX, draggedY;
 
     private boolean isCurrentlySnappingHorizontally = false;
@@ -149,17 +149,6 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         if (this.visible) {
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-            if (this.wasHovered != this.isHovered() || isAnyButtonsHovered()) {
-                if (this.isHovered) {
-                    if (this.isFocused()) {
-                        this.queueNarration(200);
-                    } else {
-                        this.queueNarration(750);
-                    }
-                } else {
-                    this.nextNarration = Long.MAX_VALUE;
-                }
-            }
 
             overlayBackground(poseStack);
             overlayName(poseStack);
@@ -174,13 +163,16 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
         }
 
-        this.narrate();
-        this.wasHovered = this.isHovered();
     }
 
     @Override
-    protected MutableComponent createNarrationMessage() {
-        return new TranslatableComponent(TranslationReferences.CONFIG_LAYOUT_ELEMENT_STRING, this.getMessage());
+    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+        narrationElementOutput.add(NarratedElementType.HINT, new TranslatableComponent(TranslationReferences.CONFIG_LAYOUT_ELEMENT_STRING, this.getMessage()));
+        for (AbstractLayoutTextureButtonElement button : children) {
+            if (button.isHovered()) {
+                button.updateNarration(narrationElementOutput);
+            }
+        }
     }
 
     private void overlayBackground(PoseStack poseStack) {

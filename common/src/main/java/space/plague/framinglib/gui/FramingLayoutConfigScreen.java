@@ -2,9 +2,10 @@ package space.plague.framinglib.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.math.Matrix4f;
 
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
@@ -13,7 +14,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -205,10 +206,11 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
             return;
         }
         BufferBuilder buffer = tesselator.getBuilder();
-        TextureManager textureManager = minecraft.getTextureManager();
-        textureManager.bind(getBackgroundTexture());
-        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
-        buffer.begin(7, DefaultVertexFormat.POSITION_TEX_COLOR);
+        RenderSystem.setShaderTexture(0, getBackgroundTexture());
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         Matrix4f matrix = poseStack.last().pose();
 
         float tiling = 32.0f;
@@ -224,8 +226,10 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
     protected void overlayGrid(PoseStack poseStack) {
         RenderSystem.disableTexture();
         BufferBuilder buffer = tesselator.getBuilder();
-        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
-        buffer.begin(7, DefaultVertexFormat.POSITION_COLOR);
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         Matrix4f matrix = poseStack.last().pose();
 
         int dot_r = 64;
@@ -325,13 +329,13 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
                     buttonsY = (height - Math.max(GraphicsReferences.DENY_BUTTON_HOLDER.getDisabled().getHeight(), Math.max(GraphicsReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getHeight(), (showResetButton ? GraphicsReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight() : 0)))) / 2;
             }
 
-            this.addButton(backButton = new FramingLayoutConfigBackButton(this, buttonsX, buttonsY, isEdited()? TranslationReferences.CONFIG_CANCEL_DISCARD : TranslationReferences.CONFIG_CANCEL, GraphicsReferences.DENY_BUTTON_HOLDER));
+            this.addRenderableWidget(backButton = new FramingLayoutConfigBackButton(this, buttonsX, buttonsY, isEdited()? TranslationReferences.CONFIG_CANCEL_DISCARD : TranslationReferences.CONFIG_CANCEL, GraphicsReferences.DENY_BUTTON_HOLDER));
             buttonsX += GraphicsReferences.DENY_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
-            this.addButton(saveButton = new FramingLayoutConfigSaveButton(this, buttonsX, buttonsY, TranslationReferences.CONFIG_SAVE, GraphicsReferences.ACCEPT_BUTTON_HOLDER));
+            this.addRenderableWidget(saveButton = new FramingLayoutConfigSaveButton(this, buttonsX, buttonsY, TranslationReferences.CONFIG_SAVE, GraphicsReferences.ACCEPT_BUTTON_HOLDER));
             saveButton.active = isEdited();
             buttonsX += GraphicsReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
             if (showResetButton) {
-                this.addButton(resetAllButton = new FramingLayoutConfigResetAllButton(this, buttonsX, buttonsY, TranslationReferences.CONFIG_RESET_ALL, GraphicsReferences.RESET_BUTTON_HOLDER));
+                this.addRenderableWidget(resetAllButton = new FramingLayoutConfigResetAllButton(this, buttonsX, buttonsY, TranslationReferences.CONFIG_RESET_ALL, GraphicsReferences.RESET_BUTTON_HOLDER));
             }
         }
 

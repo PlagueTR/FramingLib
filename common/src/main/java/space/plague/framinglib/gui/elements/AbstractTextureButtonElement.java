@@ -6,8 +6,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,6 +54,11 @@ public abstract class AbstractTextureButtonElement extends AbstractButton {
     public abstract void onPress();
 
     @Override
+    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+        narrationElementOutput.add(NarratedElementType.HINT, new TranslatableComponent("gui.narrate.button", this.getMessage()));
+    }
+
+    @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
         return this.active && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height &&
             buttonTextureHolder.getDisabled().isPixelSolid((int) (mouseX - x), (int) (mouseY - y));
@@ -67,26 +75,12 @@ public abstract class AbstractTextureButtonElement extends AbstractButton {
         if (this.visible) {
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height &&
                 buttonTextureHolder.getDisabled().isPixelSolid(mouseX - x, mouseY - y);
-            if (this.wasHovered != this.isHovered()) {
-                if (this.isHovered()) {
-                    if (this.isFocused()) {
-                        this.queueNarration(200);
-                    }
-                    else {
-                        this.queueNarration(750);
-                    }
-                }
-                else {
-                    this.nextNarration = Long.MAX_VALUE;
-                }
-            }
 
             renderTextureButton(poseStack);
             if (active && isHovered()) {
                 renderToolTip(poseStack, mouseX, mouseY);
             }
 
-            this.narrate();
             this.wasHovered = this.isHovered();
         }
     }
