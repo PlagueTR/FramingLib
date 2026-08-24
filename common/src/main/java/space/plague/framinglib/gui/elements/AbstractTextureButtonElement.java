@@ -10,7 +10,7 @@ import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 
-import net.minecraft.network.chat.TranslatableComponent;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,7 +55,7 @@ public abstract class AbstractTextureButtonElement extends AbstractButton {
 
     @Override
     public void updateNarration(NarrationElementOutput narrationElementOutput) {
-        narrationElementOutput.add(NarratedElementType.HINT, new TranslatableComponent("gui.narrate.button", this.getMessage()));
+        narrationElementOutput.add(NarratedElementType.HINT, Component.translatable("gui.narrate.button", this.getMessage()));
     }
 
     @Override

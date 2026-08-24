@@ -10,7 +10,6 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -167,7 +166,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
     @Override
     public void updateNarration(NarrationElementOutput narrationElementOutput) {
-        narrationElementOutput.add(NarratedElementType.HINT, new TranslatableComponent(TranslationReferences.CONFIG_LAYOUT_ELEMENT_STRING, this.getMessage()));
+        narrationElementOutput.add(NarratedElementType.HINT, Component.translatable(TranslationReferences.CONFIG_LAYOUT_ELEMENT_STRING, this.getMessage()));
         for (AbstractLayoutTextureButtonElement button : children) {
             if (button.isHovered()) {
                 button.updateNarration(narrationElementOutput);

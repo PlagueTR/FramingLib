@@ -1,3 +1,3 @@
-**1.0.10**:
+**1.0.11**:
 
-- Narration Fix for Minecraft 1.18.2
+- Support for Minecraft 1.19

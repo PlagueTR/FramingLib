@@ -1,6 +1,6 @@
 package space.plague.framinglib.forge;
 
-import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 
@@ -14,8 +14,8 @@ import space.plague.framinglib.demo.FramingLibDemo;
 public final class MainForge {
     public MainForge() {
 
-        ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
-            () -> new ConfigGuiHandler.ConfigGuiFactory(
+        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
+            () -> new ConfigScreenHandler.ConfigScreenFactory(
             (minecraft, screen) -> FramingLibDemo.getDemoLayoutConfigScreenBuilder().build()
         ));
 

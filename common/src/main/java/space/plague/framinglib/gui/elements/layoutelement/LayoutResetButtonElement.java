@@ -5,8 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 
 import org.jetbrains.annotations.ApiStatus;
 
@@ -27,7 +25,7 @@ public class LayoutResetButtonElement extends AbstractLayoutTextureButtonElement
 
     @Override
     public void updateNarration(NarrationElementOutput narrationElementOutput) {
-        narrationElementOutput.add(NarratedElementType.HINT, new TranslatableComponent(TranslationReferences.CONFIG_LAYOUT_ELEMENT_RESET_BUTTON_STRING, this.layoutElement.getMessage()));
+        narrationElementOutput.add(NarratedElementType.HINT, Component.translatable(TranslationReferences.CONFIG_LAYOUT_ELEMENT_RESET_BUTTON_STRING, this.layoutElement.getMessage()));
     }
 
     @Override

@@ -27,6 +27,7 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.BitSet;
+import java.util.Optional;
 
 @ApiStatus.Internal
 public class TextureInfoImpl implements TextureInfo {
@@ -54,24 +55,21 @@ public class TextureInfoImpl implements TextureInfo {
         this.region = region;
 
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-        Resource resource;
-        try {
-            resource = resourceManager.getResource(texture);
-            try (InputStream stream = resource.getInputStream()) {
-                NativeImage nativeImage = NativeImage.read(stream);
-
-                atlasWidth = nativeImage.getWidth();
-                atlasHeight = nativeImage.getHeight();
-
-                nativeImage.close();
-            }
-            catch (Exception e) {
-                atlasWidth = -1;
-                atlasHeight = -1;
-                throw new RuntimeException("Couldn't load resource " + texture, e);
-            }
+        Optional<Resource> resource = resourceManager.getResource(texture);
+        if (resource.isEmpty()) {
+            atlasWidth = -1;
+            atlasHeight = -1;
+            throw new RuntimeException("Couldn't find resource " + texture);
         }
-        catch (IOException e) {
+        try (InputStream stream = resource.get().open()) {
+            NativeImage nativeImage = NativeImage.read(stream);
+
+            atlasWidth = nativeImage.getWidth();
+            atlasHeight = nativeImage.getHeight();
+
+            nativeImage.close();
+        }
+        catch (Exception e) {
             atlasWidth = -1;
             atlasHeight = -1;
             throw new RuntimeException("Couldn't load resource " + texture, e);
@@ -130,32 +128,29 @@ public class TextureInfoImpl implements TextureInfo {
         int offsetY = region == null ? 0 : region.y;
 
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-        Resource resource;
-        try {
-            resource = resourceManager.getResource(texture);
-            try (InputStream stream = resource.getInputStream()) {
-                NativeImage nativeImage = NativeImage.read(stream);
+        Optional<Resource> resource = resourceManager.getResource(texture);
+        if (resource.isEmpty()) {
+            maskFailed = true;
 
-                for (int y = 0; y < height; y++) {
-                    for (int x = 0; x < width; x++) {
-                        if (offsetX + x < atlasWidth && offsetY + y < atlasHeight) {
-                            int color = nativeImage.getPixelRGBA(offsetX + x, offsetY + y);
-                            int alpha = (color >> 24) & 0xFF;
+            throw new RuntimeException("Couldn't find resource " + texture);
+        }
+        try (InputStream stream = resource.get().open()) {
+            NativeImage nativeImage = NativeImage.read(stream);
 
-                            mask.set(y * width + x, alpha >= ALPHA_THRESHOLD);
-                        }
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    if (offsetX + x < atlasWidth && offsetY + y < atlasHeight) {
+                        int color = nativeImage.getPixelRGBA(offsetX + x, offsetY + y);
+                        int alpha = (color >> 24) & 0xFF;
+
+                        mask.set(y * width + x, alpha >= ALPHA_THRESHOLD);
                     }
                 }
-
-                nativeImage.close();
             }
-            catch (Exception e) {
-                maskFailed = true;
 
-                throw new RuntimeException("Couldn't load resource " + texture, e);
-            }
+            nativeImage.close();
         }
-        catch (IOException e) {
+        catch (Exception e) {
             maskFailed = true;
 
             throw new RuntimeException("Couldn't load resource " + texture, e);
