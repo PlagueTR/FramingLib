@@ -26,4 +26,8 @@ public abstract class AbstractLayoutTextureButtonElement extends AbstractTexture
         this.y = layoutElement.y + offsetY;
     }
 
+    public boolean isHovered() {
+        return isHovered;
+    }
+
 }

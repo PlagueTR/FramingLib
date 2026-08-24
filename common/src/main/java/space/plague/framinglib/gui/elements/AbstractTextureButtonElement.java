@@ -77,11 +77,11 @@ public abstract class AbstractTextureButtonElement extends AbstractButton {
                 buttonTextureHolder.getDisabled().isPixelSolid(mouseX - x, mouseY - y);
 
             renderTextureButton(poseStack);
-            if (active && isHovered()) {
+            if (active && isHovered) {
                 renderToolTip(poseStack, mouseX, mouseY);
             }
 
-            this.wasHovered = this.isHovered();
+            this.wasHovered = this.isHovered;
         }
     }
 
@@ -89,7 +89,7 @@ public abstract class AbstractTextureButtonElement extends AbstractButton {
         if (!this.active) {
             buttonTextureHolder.render(poseStack, x, y, ButtonTextureHolder.ButtonState.DISABLED, color);
         }
-        else if (this.isHovered()) {
+        else if (this.isHovered) {
             buttonTextureHolder.render(poseStack, x, y, ButtonTextureHolder.ButtonState.HOVERED, color);
         }
         else {
