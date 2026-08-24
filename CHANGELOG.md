@@ -1,3 +1,3 @@
-**1.0.6**:
+**1.0.7**:
 
-- Support for Minecraft 1.18.2
+- Fix Narration for Layout Element Buttons (Element Reset Button)

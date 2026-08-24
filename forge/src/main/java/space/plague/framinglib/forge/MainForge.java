@@ -1,8 +1,8 @@
 package space.plague.framinglib.forge;
 
-import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fmlclient.ConfigGuiHandler;
 
 import org.jetbrains.annotations.ApiStatus;
 
