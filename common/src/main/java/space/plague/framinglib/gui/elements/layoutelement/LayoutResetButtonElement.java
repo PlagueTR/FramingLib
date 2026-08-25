@@ -24,7 +24,7 @@ public class LayoutResetButtonElement extends AbstractLayoutTextureButtonElement
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
         narrationElementOutput.add(NarratedElementType.HINT, Component.translatable(TranslationReferences.CONFIG_LAYOUT_ELEMENT_RESET_BUTTON_STRING, this.layoutElement.getMessage()));
     }
 

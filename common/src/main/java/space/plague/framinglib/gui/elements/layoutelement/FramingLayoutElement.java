@@ -92,8 +92,8 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
         this.value = originalIn;
 
-        this.draggedX = x;
-        this.draggedY = y;
+        this.draggedX = this.getX();
+        this.draggedY = this.getY();
     }
 
     public void setShowName(boolean showName) {
@@ -147,7 +147,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         if (this.visible) {
-            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+            this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
 
             overlayBackground(poseStack);
             overlayName(poseStack);
@@ -165,7 +165,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
         narrationElementOutput.add(NarratedElementType.HINT, Component.translatable(TranslationReferences.CONFIG_LAYOUT_ELEMENT_STRING, this.getMessage()));
         for (AbstractLayoutTextureButtonElement button : children) {
             if (button.isHovered()) {
@@ -182,7 +182,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
         if (this.isHovered) {
             state = ButtonTextureHolder.ButtonState.HOVERED;
         }
-        GraphicsReferences.LAYOUT_ELEMENT_BACKGROUND_HOLDER.render(poseStack, x, y, width, height, state, color);
+        GraphicsReferences.LAYOUT_ELEMENT_BACKGROUND_HOLDER.render(poseStack, this.getX(), this.getY(), width, height, state, color);
     }
 
     private void overlayName(PoseStack poseStack) {
@@ -190,24 +190,24 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
             return;
         }
 
-        int textY = y + height - minecraft.font.lineHeight - 3;
+        int textY = this.getY() + height - minecraft.font.lineHeight - 3;
         switch (nameAlignment.getVAlignment()) {
             case TOP:
-                textY = y + 3;
+                textY = this.getY() + 3;
                 break;
             case CENTER:
-                textY = y + (height - minecraft.font.lineHeight) / 2;
+                textY = this.getY() + (height - minecraft.font.lineHeight) / 2;
                 break;
         }
         switch (nameAlignment.getHAlignment()) {
             case LEFT:
-                drawString(poseStack, minecraft.font, name, x + 3, textY, 0xFFFFFF);
+                drawString(poseStack, minecraft.font, name, this.getX() + 3, textY, 0xFFFFFF);
                 break;
             case MIDDLE:
-                drawCenteredString(poseStack, minecraft.font, name, x + width / 2, textY, 0xFFFFFF);
+                drawCenteredString(poseStack, minecraft.font, name, this.getX() + width / 2, textY, 0xFFFFFF);
                 break;
             default:
-                drawString(poseStack, minecraft.font, name, x + width - 3 - minecraft.font.width(name), textY, 0xFFFFFF);
+                drawString(poseStack, minecraft.font, name, this.getX() + width - 3 - minecraft.font.width(name), textY, 0xFFFFFF);
         }
     }
 
@@ -216,22 +216,22 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
             return;
         }
 
-        int iconX = x + width - PADDING - iconInfo.getWidth();
+        int iconX = this.getX() + width - PADDING - iconInfo.getWidth();
         switch (iconAlignment.getHAlignment()) {
             case LEFT:
-                iconX = x + PADDING;
+                iconX = this.getX() + PADDING;
                 break;
             case MIDDLE:
-                iconX = (int) (x + (float) (width - iconInfo.getWidth()) / 2.0f);
+                iconX = (int) (this.getX() + (float) (width - iconInfo.getWidth()) / 2.0f);
                 break;
         }
-        int iconY = y + height - PADDING - iconInfo.getHeight();
+        int iconY = this.getY() + height - PADDING - iconInfo.getHeight();
         switch (iconAlignment.getVAlignment()) {
             case TOP:
-                iconY = y + PADDING;
+                iconY = this.getY() + PADDING;
                 break;
             case CENTER:
-                iconY = (int) (y + (float) (height - iconInfo.getHeight()) / 2.0f);
+                iconY = (int) (this.getY() + (float) (height - iconInfo.getHeight()) / 2.0f);
                 break;
         }
 
@@ -254,8 +254,8 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
         value.setAlignment(ra);
         value.setScreenAlignment(rsa);
 
-        draggedX = x;
-        draggedY = y;
+        draggedX = this.getX();
+        draggedY = this.getY();
 
         if (showButtons) {
             boolean addResetButton = enableResetButton && defaultValue != null;
@@ -350,8 +350,8 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
             updatePosition(dv.getActualX(), dv.getActualY());
 
-            this.draggedX = x;
-            this.draggedY = y;
+            this.draggedX = this.getX();
+            this.draggedY = this.getY();
 
             value.setOffsetX(rx);
             value.setOffsetY(ry);
@@ -446,8 +446,8 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
     }
 
     private void updatePosition(int newX, int newY) {
-        this.x = newX;
-        this.y = newY;
+        this.setX(newX);
+        this.setY(newY);
 
         for (AbstractLayoutTextureButtonElement button : children) {
             button.updatePosition();
@@ -456,14 +456,14 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
     protected void updateValue() {
 
-        Alignments.HAlignment newHAlign = PositioningHelper.getHAlignment(x, width);
-        int newX = PositioningHelper.getOffsetX(x, width);
+        Alignments.HAlignment newHAlign = PositioningHelper.getHAlignment(this.getX(), width);
+        int newX = PositioningHelper.getOffsetX(this.getX(), width);
 
-        Alignments.VAlignment newVAlign = PositioningHelper.getVAlignment(y, height);
-        int newY = PositioningHelper.getOffsetY(y, height);
+        Alignments.VAlignment newVAlign = PositioningHelper.getVAlignment(this.getY(), height);
+        int newY = PositioningHelper.getOffsetY(this.getY(), height);
 
-        int centerX = x + width / 2;
-        int centerY = y + height / 2;
+        int centerX = this.getX() + width / 2;
+        int centerY = this.getY() + height / 2;
 
         int screenCenterX = screen.width / 2;
         int screenCenterY = screen.height / 2;

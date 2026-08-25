@@ -9,9 +9,10 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-
+import net.minecraft.network.chat.MutableComponent;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import space.plague.framinglib.api.LayoutConfigScreen;
@@ -54,27 +55,27 @@ public abstract class AbstractTextureButtonElement extends AbstractButton {
     public abstract void onPress();
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
         narrationElementOutput.add(NarratedElementType.HINT, Component.translatable("gui.narrate.button", this.getMessage()));
     }
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return this.active && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height &&
-            buttonTextureHolder.getDisabled().isPixelSolid((int) (mouseX - x), (int) (mouseY - y));
+        return this.active && this.visible && mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height &&
+            buttonTextureHolder.getDisabled().isPixelSolid((int) (mouseX - this.getX()), (int) (mouseY - this.getY()));
     }
 
     @Override
     protected boolean clicked(double mouseX, double mouseY) {
-        return this.active && this.visible && mouseX >= (double)this.x && mouseY >= (double)this.y && mouseX < (double)(this.x + this.width) && mouseY < (double)(this.y + this.height) &&
-            buttonTextureHolder.getDisabled().isPixelSolid((int) (mouseX - x), (int) (mouseY - y));
+        return this.active && this.visible && mouseX >= (double)this.getX() && mouseY >= (double)this.getY() && mouseX < (double)(this.getX() + this.width) && mouseY < (double)(this.getY() + this.height) &&
+            buttonTextureHolder.getDisabled().isPixelSolid((int) (mouseX - this.getX()), (int) (mouseY - this.getY()));
     }
 
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         if (this.visible) {
-            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height &&
-                buttonTextureHolder.getDisabled().isPixelSolid(mouseX - x, mouseY - y);
+            this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height &&
+                buttonTextureHolder.getDisabled().isPixelSolid(mouseX - this.getX(), mouseY - this.getY());
 
             renderTextureButton(poseStack);
             if (active && isHovered) {
@@ -87,13 +88,13 @@ public abstract class AbstractTextureButtonElement extends AbstractButton {
 
     public void renderTextureButton(PoseStack poseStack) {
         if (!this.active) {
-            buttonTextureHolder.render(poseStack, x, y, ButtonTextureHolder.ButtonState.DISABLED, color);
+            buttonTextureHolder.render(poseStack, this.getX(), this.getY(), ButtonTextureHolder.ButtonState.DISABLED, color);
         }
         else if (this.isHovered) {
-            buttonTextureHolder.render(poseStack, x, y, ButtonTextureHolder.ButtonState.HOVERED, color);
+            buttonTextureHolder.render(poseStack, this.getX(), this.getY(), ButtonTextureHolder.ButtonState.HOVERED, color);
         }
         else {
-            buttonTextureHolder.render(poseStack, x, y, ButtonTextureHolder.ButtonState.ACTIVE, color);
+            buttonTextureHolder.render(poseStack, this.getX(), this.getY(), ButtonTextureHolder.ButtonState.ACTIVE, color);
         }
     }
 

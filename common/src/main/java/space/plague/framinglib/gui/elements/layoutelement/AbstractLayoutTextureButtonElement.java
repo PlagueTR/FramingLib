@@ -15,15 +15,15 @@ public abstract class AbstractLayoutTextureButtonElement extends AbstractTexture
     private final int offsetY;
 
     public AbstractLayoutTextureButtonElement(FramingLayoutElement layoutElement, int offsetX, int offsetY, Component name, ButtonTextureHolder buttonTextureHolder) {
-        super (layoutElement.screen, layoutElement.x + offsetX,  layoutElement.y + offsetY, name, buttonTextureHolder);
+        super (layoutElement.screen, layoutElement.getX() + offsetX,  layoutElement.getY() + offsetY, name, buttonTextureHolder);
         this.layoutElement = layoutElement;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
     }
 
     public void updatePosition() {
-        this.x = layoutElement.x + offsetX;
-        this.y = layoutElement.y + offsetY;
+        this.setX(layoutElement.getX() + offsetX);
+        this.setY(layoutElement.getY() + offsetY);
     }
 
     public boolean isHovered() {
