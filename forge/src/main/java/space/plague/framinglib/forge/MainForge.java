@@ -4,6 +4,7 @@ import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 
 import space.plague.framinglib.Main;
@@ -12,9 +13,9 @@ import space.plague.framinglib.demo.FramingLibDemo;
 @ApiStatus.Internal
 @Mod(Main.MOD_ID)
 public final class MainForge {
-    public MainForge() {
+    public MainForge(FMLJavaModLoadingContext context) {
 
-        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
+        context.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
             () -> new ConfigScreenHandler.ConfigScreenFactory(
             (minecraft, screen) -> FramingLibDemo.getDemoLayoutConfigScreenBuilder().build()
         ));

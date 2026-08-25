@@ -172,7 +172,6 @@ public class TextureInfoImpl implements TextureInfo {
     @Override
     public void render(PoseStack poseStack, int x, int y, Color color) {
         RenderSystem.enableBlend();
-        RenderSystem.enableTexture();
         Tesselator tesselator = Tesselator.getInstance();
         BufferBuilder buffer = tesselator.getBuilder();
         RenderSystem.setShaderTexture(0, texture);

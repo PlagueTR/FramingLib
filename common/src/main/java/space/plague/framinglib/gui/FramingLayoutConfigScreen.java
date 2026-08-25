@@ -225,7 +225,6 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
     }
 
     protected void overlayGrid(PoseStack poseStack) {
-        RenderSystem.disableTexture();
         BufferBuilder buffer = tesselator.getBuilder();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -276,7 +275,6 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
         }
 
         tesselator.end();
-        RenderSystem.enableTexture();
     }
 
     protected void overlaySnapping(PoseStack poseStack) {
