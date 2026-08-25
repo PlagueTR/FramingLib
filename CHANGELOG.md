@@ -1,3 +1,3 @@
-**1.0.12**:
+**1.0.13**:
 
-- Support for Minecraft 1.19.1
+- Support for Minecraft 1.19.2
