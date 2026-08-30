@@ -1,11 +1,10 @@
 package space.plague.framinglib.gui.elements.layoutelement;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -20,8 +19,8 @@ import space.plague.framinglib.api.util.AlignmentSizeOffset;
 import space.plague.framinglib.api.util.Alignments;
 import space.plague.framinglib.api.util.Color;
 import space.plague.framinglib.api.util.TextureInfo;
+import space.plague.framinglib.api.util.ButtonState;
 import space.plague.framinglib.gui.FramingLayoutConfigScreen;
-import space.plague.framinglib.util.ButtonTextureHolder;
 import space.plague.framinglib.util.MathUtils;
 import space.plague.framinglib.util.PositioningHelper;
 import space.plague.framinglib.util.references.GraphicsReferences;
@@ -61,7 +60,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
     private boolean doesDrawBackground = true;
 
     @Nullable
-    private BiConsumer<PoseStack, AlignmentSizeOffset> customRenderingFunction = null;
+    private BiConsumer<GuiGraphics, AlignmentSizeOffset> customRenderingFunction = null;
 
     private boolean snapping;
 
@@ -71,10 +70,11 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
     @NotNull
     private Alignments buttonsAlignment = GraphicsReferences.DEFAULT_LAYOUT_ELEMENT_BUTTONS_ALIGNMENT;
 
-    @Nullable
-    private LayoutResetButtonElement resetButton = null;
+    private final GenericLayoutElementTextureButton resetButton = DefaultLayoutElementButtons.createResetButton();
 
-    private final List<AbstractLayoutTextureButtonElement> children = new ArrayList<>();
+    private final List<GenericLayoutElementTextureButton> customButtons = new ArrayList<>();
+
+    private final List<GenericLayoutElementTextureButton> children = new ArrayList<>();
 
     double draggedX, draggedY;
 
@@ -119,12 +119,15 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
     public void setColor(@NotNull Color color) {
         this.color = color;
     }
+    public @NotNull Color getColor() {
+        return this.color;
+    }
 
     public void setDoesDrawBackground(boolean doesDrawBackground) {
         this.doesDrawBackground = doesDrawBackground;
     }
 
-    public void setCustomRenderingFunction(@Nullable BiConsumer<PoseStack, AlignmentSizeOffset> customRenderingFunction) {
+    public void setCustomRenderingFunction(@Nullable BiConsumer<GuiGraphics, AlignmentSizeOffset> customRenderingFunction) {
         this.customRenderingFunction = customRenderingFunction;
     }
 
@@ -145,19 +148,19 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
     }
 
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (this.visible) {
             this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
 
-            overlayBackground(poseStack);
-            overlayName(poseStack);
-            overlayIcon(poseStack);
+            overlayBackground(guiGraphics);
+            overlayName(guiGraphics);
+            overlayIcon(guiGraphics);
             if (customRenderingFunction != null) {
-                customRenderingFunction.accept(poseStack, value);
+                customRenderingFunction.accept(guiGraphics, value);
             }
 
-            for (AbstractLayoutTextureButtonElement child : children) {
-                child.render(poseStack, mouseX, mouseY, partialTick);
+            for (GenericLayoutElementTextureButton child : children) {
+                child.render(guiGraphics, mouseX, mouseY, partialTick);
             }
 
         }
@@ -166,26 +169,26 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-        narrationElementOutput.add(NarratedElementType.HINT, Component.translatable(TranslationReferences.CONFIG_LAYOUT_ELEMENT_STRING, this.getMessage()));
-        for (AbstractLayoutTextureButtonElement button : children) {
+        narrationElementOutput.add(NarratedElementType.HINT, this.getMessage());
+        for (GenericLayoutElementTextureButton button : children) {
             if (button.isHovered()) {
                 button.updateNarration(narrationElementOutput);
             }
         }
     }
 
-    private void overlayBackground(PoseStack poseStack) {
+    private void overlayBackground(GuiGraphics guiGraphics) {
         if (!doesDrawBackground) {
             return;
         }
-        ButtonTextureHolder.ButtonState state = ButtonTextureHolder.ButtonState.ACTIVE;
+        ButtonState state = ButtonState.ACTIVE;
         if (this.isHovered) {
-            state = ButtonTextureHolder.ButtonState.HOVERED;
+            state = ButtonState.HOVERED;
         }
-        GraphicsReferences.LAYOUT_ELEMENT_BACKGROUND_HOLDER.render(poseStack, this.getX(), this.getY(), width, height, state, color);
+        GraphicsReferences.LAYOUT_ELEMENT_BACKGROUND_HOLDER.render(guiGraphics, this.getX(), this.getY(), width, height, state, color);
     }
 
-    private void overlayName(PoseStack poseStack) {
+    private void overlayName(GuiGraphics guiGraphics) {
         if (!showName) {
             return;
         }
@@ -201,17 +204,17 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
         }
         switch (nameAlignment.getHAlignment()) {
             case LEFT:
-                drawString(poseStack, minecraft.font, name, this.getX() + 3, textY, 0xFFFFFF);
+                guiGraphics.drawString(minecraft.font, name, this.getX() + 3, textY, 0xFFFFFF);
                 break;
             case MIDDLE:
-                drawCenteredString(poseStack, minecraft.font, name, this.getX() + width / 2, textY, 0xFFFFFF);
+                guiGraphics.drawCenteredString(minecraft.font, name, this.getX() + width / 2, textY, 0xFFFFFF);
                 break;
             default:
-                drawString(poseStack, minecraft.font, name, this.getX() + width - 3 - minecraft.font.width(name), textY, 0xFFFFFF);
+                guiGraphics.drawString(minecraft.font, name, this.getX() + width - 3 - minecraft.font.width(name), textY, 0xFFFFFF);
         }
     }
 
-    private void overlayIcon(PoseStack poseStack) {
+    private void overlayIcon(GuiGraphics guiGraphics) {
         if (!showIcon || iconInfo == null || iconInfo.getWidth() <= 0 || iconInfo.getHeight() <= 0) {
             return;
         }
@@ -235,7 +238,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
                 break;
         }
 
-        iconInfo.render(poseStack, iconX, iconY, GraphicsReferences.WHITE);
+        iconInfo.render(guiGraphics, iconX, iconY, GraphicsReferences.WHITE);
     }
 
     public void init() {
@@ -258,40 +261,56 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
         draggedY = this.getY();
 
         if (showButtons) {
-            boolean addResetButton = enableResetButton && defaultValue != null;
+            addButtons();
+        }
+    }
 
-            int buttonWidths = 0;
-            if (addResetButton) {
-                buttonWidths += GraphicsReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
-            }
-            int buttonsOffsetX;
-            switch (buttonsAlignment.getHAlignment()) {
-                case LEFT:
-                    buttonsOffsetX = PADDING;
-                    break;
-                case RIGHT:
-                    buttonsOffsetX = width - buttonWidths;
-                    break;
-                default:
-                    buttonsOffsetX = (width - buttonWidths) / 2;
-            }
-            int buttonsOffsetY;
-            switch (buttonsAlignment.getVAlignment()) {
-                case TOP:
-                    buttonsOffsetY = PADDING;
-                    break;
-                case BOTTOM:
-                    buttonsOffsetY = height - (addResetButton ? GraphicsReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER.getDisabled().getHeight() : 0) - PADDING;
-                    break;
-                default:
-                    buttonsOffsetY = (height - (addResetButton ? GraphicsReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER.getDisabled().getHeight() : 0)) / 2;
-            }
+    public void addButtons() {
+        boolean addResetButton = enableResetButton && defaultValue != null;
 
-            if (addResetButton) {
-                resetButton = new LayoutResetButtonElement(this, buttonsOffsetX, buttonsOffsetY, TranslationReferences.CONFIG_LAYOUT_ELEMENT_RESET, GraphicsReferences.LAYOUT_ELEMENT_RESET_BUTTON_HOLDER);
-                resetButton.setColor(color);
-                children.add(resetButton);
-            }
+        int buttonWidths = 0;
+        int maxButtonHeight = 0;
+        if (addResetButton) {
+            buttonWidths += resetButton.getTextureWidth() + PADDING;
+            maxButtonHeight = resetButton.getTextureHeight();
+        }
+
+        for (GenericLayoutElementTextureButton customButton : customButtons) {
+            buttonWidths += customButton.getTextureWidth() + PADDING;
+            maxButtonHeight = Math.max(maxButtonHeight, customButton.getTextureHeight());
+        }
+        int buttonsOffsetX;
+        switch (buttonsAlignment.getHAlignment()) {
+            case LEFT:
+                buttonsOffsetX = PADDING;
+                break;
+            case RIGHT:
+                buttonsOffsetX = width - buttonWidths;
+                break;
+            default:
+                buttonsOffsetX = (width - buttonWidths) / 2;
+        }
+        int buttonsOffsetY;
+        switch (buttonsAlignment.getVAlignment()) {
+            case TOP:
+                buttonsOffsetY = PADDING;
+                break;
+            case BOTTOM:
+                buttonsOffsetY = height - maxButtonHeight - PADDING;
+                break;
+            default:
+                buttonsOffsetY = (height - maxButtonHeight) / 2;
+        }
+
+        if (addResetButton) {
+            resetButton.init(this, buttonsOffsetX, buttonsOffsetY);
+            children.add(resetButton);
+            buttonsOffsetX += resetButton.getTextureWidth() + PADDING;
+        }
+        for (GenericLayoutElementTextureButton customButton : customButtons) {
+            customButton.init(this, buttonsOffsetX, buttonsOffsetY);
+            children.add(customButton);
+            buttonsOffsetX += customButton.getTextureWidth() + PADDING;
         }
     }
 
@@ -318,7 +337,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
     }
 
     public boolean isAnyButtonsHovered() {
-        for (AbstractLayoutTextureButtonElement button : children) {
+        for (GenericLayoutElementTextureButton button : children) {
             if (button.isHovered()) {
                 return true;
             }
@@ -370,7 +389,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
             boolean flag = this.clicked(mouseX, mouseY);
             if (flag) {
                 if (isAnyButtonsHovered()) {
-                    for (AbstractLayoutTextureButtonElement buttonElement : children) {
+                    for (GenericLayoutElementTextureButton buttonElement : children) {
                         if (buttonElement.mouseClicked(mouseX, mouseY, button)) {
                             return true;
                         }
@@ -449,7 +468,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
         this.setX(newX);
         this.setY(newY);
 
-        for (AbstractLayoutTextureButtonElement button : children) {
+        for (GenericLayoutElementTextureButton button : children) {
             button.updatePosition();
         }
     }
@@ -482,4 +501,7 @@ public class FramingLayoutElement extends AbstractWidget implements LayoutElemen
         value.setAlignment(Alignments.create(newHAlign, newVAlign));
     }
 
+    public void addCustomButtons(List<GenericLayoutElementTextureButton> layoutElementButtons) {
+        this.customButtons.addAll(layoutElementButtons);
+    }
 }

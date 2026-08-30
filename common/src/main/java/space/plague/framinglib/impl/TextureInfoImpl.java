@@ -2,14 +2,9 @@ package space.plague.framinglib.impl;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -17,8 +12,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import org.joml.Matrix4f;
 
 import space.plague.framinglib.api.util.Color;
 import space.plague.framinglib.api.util.TextureInfo;
@@ -36,7 +29,7 @@ public class TextureInfoImpl implements TextureInfo {
 
     @NotNull
     private final ResourceLocation texture;
-    @Nullable
+    @NotNull
     private final Rectangle region;
 
     private int atlasWidth;
@@ -52,7 +45,6 @@ public class TextureInfoImpl implements TextureInfo {
 
     public TextureInfoImpl(@NotNull ResourceLocation texture, @Nullable Rectangle region) {
         this.texture = texture;
-        this.region = region;
 
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
         Optional<Resource> resource = resourceManager.getResource(texture);
@@ -76,10 +68,12 @@ public class TextureInfoImpl implements TextureInfo {
         }
 
         if (region == null) {
+            this.region = new Rectangle(0, 0, atlasWidth, atlasHeight);
             width = atlasWidth;
             height = atlasHeight;
         }
         else {
+            this.region = region;
             width = region.width;
             height = region.height;
         }
@@ -90,6 +84,11 @@ public class TextureInfoImpl implements TextureInfo {
     @Override
     public @NotNull ResourceLocation getTexture() {
         return texture;
+    }
+
+    @Override
+    public @NotNull Rectangle getRegion() {
+        return region;
     }
 
     @Override
@@ -124,8 +123,8 @@ public class TextureInfoImpl implements TextureInfo {
         }
         mask = new BitSet(width * height);
 
-        int offsetX = region == null ? 0 : region.x;
-        int offsetY = region == null ? 0 : region.y;
+        int offsetX = region.x;
+        int offsetY = region.y;
 
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
         Optional<Resource> resource = resourceManager.getResource(texture);
@@ -170,28 +169,20 @@ public class TextureInfoImpl implements TextureInfo {
     }
 
     @Override
-    public void render(PoseStack poseStack, int x, int y, Color color) {
+    public void render(GuiGraphics guiGraphics, int x, int y, Color color) {
         RenderSystem.enableBlend();
-        Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder buffer = tesselator.getBuilder();
-        RenderSystem.setShaderTexture(0, texture);
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        Matrix4f matrix = poseStack.last().pose();
+        guiGraphics.setColor(
+            color.getRedFloat(),
+            color.getGreenFloat(),
+            color.getBlueFloat(),
+            color.getAlphaFloat()
+        );
 
-        float r = color.getRedFloat();
-        float g = color.getGreenFloat();
-        float b = color.getBlueFloat();
-        float a = color.getAlphaFloat();
+        guiGraphics.blit(texture, x, y, region.x, region.y, width, height, atlasWidth, atlasHeight);
 
-        buffer.vertex(matrix, x, y + height, 0.0f).uv(textureUV.getUMin(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width, y + height, 0.0f).uv(textureUV.getUMax(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width, y, 0.0f).uv(textureUV.getUMax(), textureUV.getVMin()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x, y, 0.0f).uv(textureUV.getUMin(), textureUV.getVMin()).color(r, g, b, a).endVertex();
+        guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-        tesselator.end();
         RenderSystem.disableBlend();
     }
 

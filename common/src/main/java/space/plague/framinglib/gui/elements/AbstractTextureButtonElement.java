@@ -1,24 +1,22 @@
 package space.plague.framinglib.gui.elements;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import space.plague.framinglib.api.LayoutConfigScreen;
+import space.plague.framinglib.api.util.ButtonState;
 import space.plague.framinglib.api.util.Color;
 import space.plague.framinglib.gui.FramingLayoutConfigScreen;
-import space.plague.framinglib.util.ButtonTextureHolder;
+import space.plague.framinglib.util.ButtonTextureHolderImpl;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -27,20 +25,22 @@ import java.util.function.Supplier;
 @Environment(EnvType.CLIENT)
 public abstract class AbstractTextureButtonElement extends AbstractButton {
 
-    protected final LayoutConfigScreen screen;
-    protected final ButtonTextureHolder buttonTextureHolder;
+    protected LayoutConfigScreen screen;
+
+    protected Supplier<ButtonTextureHolderImpl> buttonTextureSupplier;
 
     @Nullable
-    private Supplier<Optional<Component>> tooltipSupplier;
+    protected Supplier<Optional<Component>> tooltipSupplier;
 
     private Color color;
 
-    protected boolean wasHovered = false;
-
-    public AbstractTextureButtonElement(FramingLayoutConfigScreen parent, int x, int y, Component name, ButtonTextureHolder buttonTextureHolder) {
-        super(x, y, buttonTextureHolder.getDisabled().getWidth(), buttonTextureHolder.getDisabled().getHeight(), name);
+    public AbstractTextureButtonElement(FramingLayoutConfigScreen parent, int x, int y, Component name, Supplier<ButtonTextureHolderImpl> buttonTextureSupplier) {
+        super(x, y,
+            buttonTextureSupplier.get() != null ? buttonTextureSupplier.get().getDisabledTextureInfo().getWidth() : 0,
+            buttonTextureSupplier.get() != null ? buttonTextureSupplier.get().getDisabledTextureInfo().getHeight() : 0,
+            name);
         this.screen = parent;
-        this.buttonTextureHolder = buttonTextureHolder;
+        this.buttonTextureSupplier = buttonTextureSupplier;
         this.color = Color.create(255, 255, 255);
     }
 
@@ -62,43 +62,41 @@ public abstract class AbstractTextureButtonElement extends AbstractButton {
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
         return this.active && this.visible && mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height &&
-            buttonTextureHolder.getDisabled().isPixelSolid((int) (mouseX - this.getX()), (int) (mouseY - this.getY()));
+            buttonTextureSupplier.get().getDisabledTextureInfo().isPixelSolid((int) (mouseX - this.getX()), (int) (mouseY - this.getY()));
     }
 
     @Override
     protected boolean clicked(double mouseX, double mouseY) {
         return this.active && this.visible && mouseX >= (double)this.getX() && mouseY >= (double)this.getY() && mouseX < (double)(this.getX() + this.width) && mouseY < (double)(this.getY() + this.height) &&
-            buttonTextureHolder.getDisabled().isPixelSolid((int) (mouseX - this.getX()), (int) (mouseY - this.getY()));
+            buttonTextureSupplier.get().getDisabledTextureInfo().isPixelSolid((int) (mouseX - this.getX()), (int) (mouseY - this.getY()));
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (this.visible) {
             this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height &&
-                buttonTextureHolder.getDisabled().isPixelSolid(mouseX - this.getX(), mouseY - this.getY());
+                buttonTextureSupplier.get().getDisabledTextureInfo().isPixelSolid(mouseX - this.getX(), mouseY - this.getY());
 
-            renderTextureButton(poseStack);
+            renderTextureButton(guiGraphics);
             if (active && isHovered) {
-                renderToolTip(poseStack, mouseX, mouseY);
+                renderToolTip();
             }
-
-            this.wasHovered = this.isHovered;
         }
     }
 
-    public void renderTextureButton(PoseStack poseStack) {
+    public void renderTextureButton(GuiGraphics guiGraphics) {
         if (!this.active) {
-            buttonTextureHolder.render(poseStack, this.getX(), this.getY(), ButtonTextureHolder.ButtonState.DISABLED, color);
+            buttonTextureSupplier.get().render(guiGraphics, this.getX(), this.getY(), ButtonState.DISABLED, color);
         }
         else if (this.isHovered) {
-            buttonTextureHolder.render(poseStack, this.getX(), this.getY(), ButtonTextureHolder.ButtonState.HOVERED, color);
+            buttonTextureSupplier.get().render(guiGraphics, this.getX(), this.getY(), ButtonState.HOVERED, color);
         }
         else {
-            buttonTextureHolder.render(poseStack, this.getX(), this.getY(), ButtonTextureHolder.ButtonState.ACTIVE, color);
+            buttonTextureSupplier.get().render(guiGraphics, this.getX(), this.getY(), ButtonState.ACTIVE, color);
         }
     }
 
-    public void renderToolTip(PoseStack poseStack, int mouseX, int mouseY) {
+    public void renderToolTip() {
         if (this.tooltipSupplier != null && this.tooltipSupplier.get().isPresent()) {
             screen.setTooltip(this.tooltipSupplier.get().get());
         }

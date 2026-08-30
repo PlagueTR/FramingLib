@@ -21,12 +21,10 @@ public class TranslationReferences {
 
     public static final Component CONFIG_LAYOUT_ELEMENT_RESET = Component.translatable("text.framinglib.layout_element_reset");
 
-    public static final String CONFIG_LAYOUT_ELEMENT_STRING = "text.framinglib.layout_element";
-    public static final String CONFIG_LAYOUT_ELEMENT_RESET_BUTTON_STRING = "text.framinglib.reset_button";
+    public static final String CONFIG_LAYOUT_ELEMENT_BUTTON_NARRATION_STRING = "text.framinglib.layout_element_button_narration";
 
     public static final Component DEMO_CONFIG_TITLE = Component.translatable("text.framinglib.demo_config_title");
 
     public static final Component DEMO_ELEMENT_1 = Component.translatable("text.framinglib.demo_element_1");
     public static final Component DEMO_ELEMENT_2 = Component.translatable("text.framinglib.demo_element_2");
-
 }

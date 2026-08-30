@@ -1,10 +1,9 @@
 package space.plague.framinglib.impl.builders;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -12,14 +11,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import space.plague.framinglib.api.LayoutElement;
+import space.plague.framinglib.api.LayoutElementButton;
 import space.plague.framinglib.api.util.AlignmentSizeOffset;
 import space.plague.framinglib.api.LayoutElementBuilder;
 import space.plague.framinglib.api.util.Alignments;
 import space.plague.framinglib.api.util.Color;
 import space.plague.framinglib.api.util.TextureInfo;
 import space.plague.framinglib.gui.elements.layoutelement.FramingLayoutElement;
+import space.plague.framinglib.gui.elements.layoutelement.GenericLayoutElementTextureButton;
 import space.plague.framinglib.util.references.GraphicsReferences;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -47,7 +50,7 @@ public class LayoutElementBuilderImpl implements LayoutElementBuilder {
     private boolean doesDrawBackground = true;
 
     @Nullable
-    private BiConsumer<PoseStack, AlignmentSizeOffset> customRenderingFunction = null;
+    private BiConsumer<GuiGraphics, AlignmentSizeOffset> customRenderingFunction = null;
 
     private boolean snapping = true;
 
@@ -56,6 +59,8 @@ public class LayoutElementBuilderImpl implements LayoutElementBuilder {
     private boolean showButtons = true;
     @NotNull
     private Alignments buttonsAlignment = GraphicsReferences.DEFAULT_LAYOUT_ELEMENT_BUTTONS_ALIGNMENT;
+
+    private final List<GenericLayoutElementTextureButton> layoutElementButtons = new ArrayList<>();
 
     public LayoutElementBuilderImpl(@NotNull AlignmentSizeOffset alignmentOffsetIn, @NotNull Component name) {
         this.original = alignmentOffsetIn;
@@ -132,7 +137,7 @@ public class LayoutElementBuilderImpl implements LayoutElementBuilder {
     }
 
     @Override
-    public LayoutElementBuilder setCustomRenderingFunction(BiConsumer<PoseStack, AlignmentSizeOffset> customRenderingFunction) {
+    public LayoutElementBuilder setCustomRenderingFunction(BiConsumer<GuiGraphics, AlignmentSizeOffset> customRenderingFunction) {
         this.customRenderingFunction = customRenderingFunction;
         return this;
     }
@@ -168,6 +173,15 @@ public class LayoutElementBuilderImpl implements LayoutElementBuilder {
     }
 
     @Override
+    public LayoutElementBuilder addLayoutElementButtonEntry(LayoutElementButton buttonEntry) {
+        if (buttonEntry instanceof GenericLayoutElementTextureButton) {
+            GenericLayoutElementTextureButton lbe = (GenericLayoutElementTextureButton) buttonEntry;
+            this.layoutElementButtons.add(lbe);
+        }
+        return this;
+    }
+
+    @Override
     public LayoutElement build() {
         FramingLayoutElement element = new FramingLayoutElement(original, name, defaultValue);
 
@@ -189,6 +203,8 @@ public class LayoutElementBuilderImpl implements LayoutElementBuilder {
         element.setEnableResetButton(enableResetButton);
 
         element.setButtonsAlignment(buttonsAlignment);
+
+        element.addCustomButtons(layoutElementButtons);
 
         return element;
     }

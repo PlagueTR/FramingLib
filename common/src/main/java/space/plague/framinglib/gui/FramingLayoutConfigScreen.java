@@ -1,26 +1,17 @@
 package space.plague.framinglib.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-
-import org.joml.Matrix4f;
 
 import org.lwjgl.glfw.GLFW;
 
@@ -45,7 +36,6 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
     public static final int SNAPPING_THRESHOLD = 10;
 
     private final Screen parent;
-    private final Tesselator tesselator = Tesselator.getInstance();
 
     @Nullable
     private Runnable savingRunnable = null;
@@ -73,8 +63,6 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
 
     private boolean isCurrentlySnappingHorizontally = false;
     private boolean isCurrentlySnappingVertically = false;
-
-    private Component tooltip = null;
 
     public FramingLayoutConfigScreen(Screen parent, Component title, List<LayoutElement> layoutElementList, ResourceLocation backgroundTexture) {
         super(title);
@@ -153,7 +141,7 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
 
     @Override
     public void setTooltip(Component tooltip) {
-        this.tooltip = tooltip;
+        setTooltipForNextRenderPass(tooltip);
     }
 
     @Override
@@ -202,96 +190,57 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
         }
     }
 
-    protected void overlayBackground(PoseStack poseStack) {
+    protected void overlayBackground(GuiGraphics guiGraphics) {
         if (isTransparentBackground() || minecraft == null) {
             return;
         }
-        BufferBuilder buffer = tesselator.getBuilder();
-        RenderSystem.setShaderTexture(0, getBackgroundTexture());
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        guiGraphics.setColor(0.25f, 0.25f, 0.25f, 1.0f);
 
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        Matrix4f matrix = poseStack.last().pose();
+        int tiling = 32;
 
-        float tiling = 32.0f;
+        guiGraphics.blit(getBackgroundTexture(), 0, 0, 0, 0.0f, 0.0f, width, height, tiling, tiling);
 
-        buffer.vertex(matrix, 0.0f, height, 0.0f).uv(0.0f, height / tiling).color(64, 64, 64, 255).endVertex();
-        buffer.vertex(matrix, width, height, 0.0f).uv(width / tiling, height / tiling).color(64, 64, 64, 255).endVertex();
-        buffer.vertex(matrix, width, 0.0f, 0.0f).uv(width / tiling, 0.0f).color(64, 64, 64, 255).endVertex();
-        buffer.vertex(matrix, 0.0f, 0.0f, 0.0f).uv(0.0f, 0.0f).color(64, 64, 64, 255).endVertex();
-
-        tesselator.end();
+        guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
-    protected void overlayGrid(PoseStack poseStack) {
-        BufferBuilder buffer = tesselator.getBuilder();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        Matrix4f matrix = poseStack.last().pose();
-
-        int dot_r = 64;
-        int dot_g = 64;
-        int dot_b = 64;
+    protected void overlayGrid(GuiGraphics guiGraphics) {
+        int dot_argb = 0xFF404040;
 
         float dot_size = 3.0f;
 
         float val = (height / 3.0f) - 1.0f;
         for (float x = 0.0f; x < width; x += dot_size * 2) {
             float dotWidth = Math.min(dot_size, width - x);
-            buffer.vertex(matrix, x, val + 1, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
-            buffer.vertex(matrix, x + dotWidth, val + 1, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
-            buffer.vertex(matrix, x + dotWidth, val, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
-            buffer.vertex(matrix, x, val, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
+            guiGraphics.fill((int)x, (int)val, (int)(x + dotWidth), (int)(val + 1), dot_argb);
         }
 
         val = ((2.0f * height) / 3.0f);
         for (float x = 0.0f; x < width; x += dot_size * 2) {
             float dotWidth = Math.min(dot_size, width - x);
-            buffer.vertex(matrix, x, val + 1, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
-            buffer.vertex(matrix, x + dotWidth, val + 1, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
-            buffer.vertex(matrix, x + dotWidth, val, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
-            buffer.vertex(matrix, x, val, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
+            guiGraphics.fill((int)x, (int)val, (int)(x + dotWidth), (int)(val + 1), dot_argb);
         }
 
         val = (width / 3.0f) - 1.0f;
         for (float y = 0.0f; y < height; y += dot_size * 2) {
             float dotWidth = Math.min(dot_size, height - y);
-            buffer.vertex(matrix, val, y + dotWidth, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
-            buffer.vertex(matrix, val + 1, y + dotWidth, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
-            buffer.vertex(matrix, val + 1, y, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
-            buffer.vertex(matrix, val, y, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
+            guiGraphics.fill((int)val, (int)y, (int)(val + 1), (int)(y + dotWidth), dot_argb);
         }
 
         val = ((2.0f * width) / 3.0f) - 1.0f;
         for (float y = 0.0f; y < height; y += dot_size * 2) {
             float dotWidth = Math.min(dot_size, height - y);
-            buffer.vertex(matrix, val, y + dotWidth, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
-            buffer.vertex(matrix, val + 1, y + dotWidth, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
-            buffer.vertex(matrix, val + 1, y, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
-            buffer.vertex(matrix, val, y, 0.0f).color(dot_r, dot_g, dot_b, 255).endVertex();
+            guiGraphics.fill((int)val, (int)y, (int)(val + 1), (int)(y + dotWidth), dot_argb);
         }
-
-        tesselator.end();
     }
 
-    protected void overlaySnapping(PoseStack poseStack) {
+    protected void overlaySnapping(GuiGraphics guiGraphics) {
         int snappingColor = 0x1AFFFFFF;
         if (isCurrentlySnappingHorizontally) {
-            fillGradient(poseStack, (this.width - SNAPPING_THRESHOLD) / 2, 0, (this.width + SNAPPING_THRESHOLD) / 2, this.height, snappingColor, snappingColor);
+            guiGraphics.fillGradient((this.width - SNAPPING_THRESHOLD) / 2, 0, (this.width + SNAPPING_THRESHOLD) / 2, this.height, snappingColor, snappingColor);
         }
         if (isCurrentlySnappingVertically) {
-            fillGradient(poseStack, 0, (this.height - SNAPPING_THRESHOLD) / 2, this.width, (this.height + SNAPPING_THRESHOLD) / 2, snappingColor, snappingColor);
+            guiGraphics.fillGradient(0, (this.height - SNAPPING_THRESHOLD) / 2, this.width, (this.height + SNAPPING_THRESHOLD) / 2, snappingColor, snappingColor);
         }
-    }
-
-    private void renderTooltips(PoseStack poseStack, int mouseX, int mouseY) {
-        if (tooltip != null) {
-            renderTooltip(poseStack, tooltip, mouseX, mouseY);
-        }
-        tooltip = null;
     }
 
     @Override
@@ -299,10 +248,10 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
         super.init();
 
         if (isShowButtons()) {
-            int buttonWidths = GraphicsReferences.DENY_BUTTON_HOLDER.getDisabled().getWidth() + GraphicsReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getWidth() + PADDING * 2;
+            int buttonWidths = GraphicsReferences.DENY_BUTTON_HOLDER.getDisabledTextureInfo().getWidth() + GraphicsReferences.ACCEPT_BUTTON_HOLDER.getDisabledTextureInfo().getWidth() + PADDING * 2;
 
             if (showResetButton) {
-                buttonWidths += GraphicsReferences.RESET_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
+                buttonWidths += GraphicsReferences.RESET_BUTTON_HOLDER.getDisabledTextureInfo().getWidth() + PADDING;
             }
 
             int buttonsX;
@@ -322,17 +271,17 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
                     buttonsY = PADDING;
                     break;
                 case BOTTOM:
-                    buttonsY = height - Math.max(GraphicsReferences.DENY_BUTTON_HOLDER.getDisabled().getHeight(), Math.max(GraphicsReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getHeight(), (showResetButton ? GraphicsReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight() : 0))) - PADDING;
+                    buttonsY = height - Math.max(GraphicsReferences.DENY_BUTTON_HOLDER.getDisabledTextureInfo().getHeight(), Math.max(GraphicsReferences.ACCEPT_BUTTON_HOLDER.getDisabledTextureInfo().getHeight(), (showResetButton ? GraphicsReferences.RESET_BUTTON_HOLDER.getDisabledTextureInfo().getHeight() : 0))) - PADDING;
                     break;
                 default:
-                    buttonsY = (height - Math.max(GraphicsReferences.DENY_BUTTON_HOLDER.getDisabled().getHeight(), Math.max(GraphicsReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getHeight(), (showResetButton ? GraphicsReferences.RESET_BUTTON_HOLDER.getDisabled().getHeight() : 0)))) / 2;
+                    buttonsY = (height - Math.max(GraphicsReferences.DENY_BUTTON_HOLDER.getDisabledTextureInfo().getHeight(), Math.max(GraphicsReferences.ACCEPT_BUTTON_HOLDER.getDisabledTextureInfo().getHeight(), (showResetButton ? GraphicsReferences.RESET_BUTTON_HOLDER.getDisabledTextureInfo().getHeight() : 0)))) / 2;
             }
 
             this.addRenderableWidget(backButton = new FramingLayoutConfigBackButton(this, buttonsX, buttonsY, isEdited()? TranslationReferences.CONFIG_CANCEL_DISCARD : TranslationReferences.CONFIG_CANCEL, GraphicsReferences.DENY_BUTTON_HOLDER));
-            buttonsX += GraphicsReferences.DENY_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
+            buttonsX += GraphicsReferences.DENY_BUTTON_HOLDER.getDisabledTextureInfo().getWidth() + PADDING;
             this.addRenderableWidget(saveButton = new FramingLayoutConfigSaveButton(this, buttonsX, buttonsY, TranslationReferences.CONFIG_SAVE, GraphicsReferences.ACCEPT_BUTTON_HOLDER));
             saveButton.active = isEdited();
-            buttonsX += GraphicsReferences.ACCEPT_BUTTON_HOLDER.getDisabled().getWidth() + PADDING;
+            buttonsX += GraphicsReferences.ACCEPT_BUTTON_HOLDER.getDisabledTextureInfo().getWidth() + PADDING;
             if (showResetButton) {
                 this.addRenderableWidget(resetAllButton = new FramingLayoutConfigResetAllButton(this, buttonsX, buttonsY, TranslationReferences.CONFIG_RESET_ALL, GraphicsReferences.RESET_BUTTON_HOLDER));
             }
@@ -391,12 +340,12 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (isTransparentBackground()) {
-            fillGradient(poseStack, 0, 0, this.width, this.height, 0xC0101010, 0xD0101010 );
+            guiGraphics.fillGradient(0, 0, this.width, this.height, 0xC0101010, 0xD0101010 );
         }
         else {
-            overlayBackground(poseStack);
+            overlayBackground(guiGraphics);
         }
         isCurrentlySnappingHorizontally = false;
         isCurrentlySnappingVertically = false;
@@ -409,15 +358,15 @@ public class FramingLayoutConfigScreen extends Screen implements LayoutConfigScr
                 break;
             }
         }
-        overlaySnapping(poseStack);
-        overlayGrid(poseStack);
+        overlaySnapping(guiGraphics);
+        overlayGrid(guiGraphics);
         for(LayoutElement layoutElement : getLayoutElementList()) {
             if (layoutElement instanceof FramingLayoutElement) {
-                ((FramingLayoutElement) layoutElement).render(poseStack, mouseX, mouseY, partialTick);
+                ((FramingLayoutElement) layoutElement).render(guiGraphics, mouseX, mouseY, partialTick);
             }
         }
-        super.render(poseStack, mouseX, mouseY, partialTick);
-        renderTooltips(poseStack, mouseX, mouseY);
+
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
 }

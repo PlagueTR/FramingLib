@@ -1,24 +1,18 @@
 package space.plague.framinglib.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
+import net.minecraft.client.gui.GuiGraphics;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import org.joml.Matrix4f;
-
+import space.plague.framinglib.api.util.ButtonState;
 import space.plague.framinglib.api.util.Color;
 import space.plague.framinglib.api.util.TextureInfo;
-import space.plague.framinglib.api.util.TextureUV;
 
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
@@ -37,7 +31,7 @@ public class NineSliceButtonTextureHolder {
         this.hovered = hovered;
     }
 
-    public void render(PoseStack poseStack, int x, int y, int width, int height, ButtonTextureHolder.ButtonState state, Color color) {
+    public void render(GuiGraphics guiGraphics, int x, int y, int width, int height, ButtonState state, Color color) {
         NineSliceTexture toDraw;
         switch (state) {
             case ACTIVE:
@@ -51,94 +45,44 @@ public class NineSliceButtonTextureHolder {
         }
 
         RenderSystem.enableBlend();
-        Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder buffer = tesselator.getBuilder();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        Matrix4f matrix = poseStack.last().pose();
 
-        float r = color.getRedFloat();
-        float g = color.getGreenFloat();
-        float b = color.getBlueFloat();
-        float a = color.getAlphaFloat();
+        guiGraphics.setColor(
+            color.getRedFloat(),
+            color.getGreenFloat(),
+            color.getBlueFloat(),
+            color.getAlphaFloat()
+        );
 
         TextureInfo textureInfo = toDraw.getTextureInfos()[0][0];
-        TextureUV textureUV = textureInfo.getUV();
-
-        RenderSystem.setShaderTexture(0, textureInfo.getTexture());
-
-        buffer.vertex(matrix, x, y + textureInfo.getHeight(), 0.0f).uv(textureUV.getUMin(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + textureInfo.getWidth(), y + textureInfo.getHeight(), 0.0f).uv(textureUV.getUMax(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + textureInfo.getWidth(), y, 0.0f).uv(textureUV.getUMax(), textureUV.getVMin()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x, y, 0.0f).uv(textureUV.getUMin(), textureUV.getVMin()).color(r, g, b, a).endVertex();
+        guiGraphics.blit(textureInfo.getTexture(), x, y, textureInfo.getRegion().x, textureInfo.getRegion().y, textureInfo.getWidth(), textureInfo.getHeight(), textureInfo.getAtlasWidth(), textureInfo.getAtlasHeight());
 
         textureInfo = toDraw.getTextureInfos()[0][2];
-        textureUV = textureInfo.getUV();
-
-        buffer.vertex(matrix, x + width - textureInfo.getWidth(), y + textureInfo.getHeight(), 0.0f).uv(textureUV.getUMin(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width, y + textureInfo.getHeight(), 0.0f).uv(textureUV.getUMax(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width, y, 0.0f).uv(textureUV.getUMax(), textureUV.getVMin()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width - textureInfo.getWidth(), y, 0.0f).uv(textureUV.getUMin(), textureUV.getVMin()).color(r, g, b, a).endVertex();
+        guiGraphics.blit(textureInfo.getTexture(), x + width - textureInfo.getWidth(), y, textureInfo.getRegion().x, textureInfo.getRegion().y, textureInfo.getWidth(), textureInfo.getHeight(), textureInfo.getAtlasWidth(), textureInfo.getAtlasHeight());
 
         textureInfo = toDraw.getTextureInfos()[2][0];
-        textureUV = textureInfo.getUV();
-
-        buffer.vertex(matrix, x, y + height, 0.0f).uv(textureUV.getUMin(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + textureInfo.getWidth(), y + height, 0.0f).uv(textureUV.getUMax(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + textureInfo.getWidth(), y + height - textureInfo.getHeight(), 0.0f).uv(textureUV.getUMax(), textureUV.getVMin()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x, y + height - textureInfo.getHeight(), 0.0f).uv(textureUV.getUMin(), textureUV.getVMin()).color(r, g, b, a).endVertex();
+        guiGraphics.blit(textureInfo.getTexture(), x, y + height - textureInfo.getHeight(), textureInfo.getRegion().x, textureInfo.getRegion().y, textureInfo.getWidth(), textureInfo.getHeight(), textureInfo.getAtlasWidth(), textureInfo.getAtlasHeight());
 
         textureInfo = toDraw.getTextureInfos()[2][2];
-        textureUV = textureInfo.getUV();
-
-        buffer.vertex(matrix, x + width - textureInfo.getWidth(), y + height, 0.0f).uv(textureUV.getUMin(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width, y + height, 0.0f).uv(textureUV.getUMax(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width, y + height - textureInfo.getHeight(), 0.0f).uv(textureUV.getUMax(), textureUV.getVMin()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width - textureInfo.getWidth(), y + height - textureInfo.getHeight(), 0.0f).uv(textureUV.getUMin(), textureUV.getVMin()).color(r, g, b, a).endVertex();
+        guiGraphics.blit(textureInfo.getTexture(), x + width - textureInfo.getWidth(), y + height - textureInfo.getHeight(), textureInfo.getRegion().x, textureInfo.getRegion().y, textureInfo.getWidth(), textureInfo.getHeight(), textureInfo.getAtlasWidth(), textureInfo.getAtlasHeight());
 
         textureInfo = toDraw.getTextureInfos()[0][1];
-        textureUV = textureInfo.getUV();
-
-        buffer.vertex(matrix, x + toDraw.getTextureInfos()[0][0].getWidth(), y + textureInfo.getHeight(), 0.0f).uv(textureUV.getUMin(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width - toDraw.getTextureInfos()[0][2].getWidth(), y + textureInfo.getHeight(), 0.0f).uv(textureUV.getUMax(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width - toDraw.getTextureInfos()[0][2].getWidth(), y, 0.0f).uv(textureUV.getUMax(), textureUV.getVMin()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + toDraw.getTextureInfos()[0][0].getWidth(), y, 0.0f).uv(textureUV.getUMin(), textureUV.getVMin()).color(r, g, b, a).endVertex();
+        guiGraphics.blit(textureInfo.getTexture(), x + toDraw.getTextureInfos()[0][0].getWidth(), y, width - toDraw.getTextureInfos()[0][0].getWidth() - toDraw.getTextureInfos()[0][2].getWidth(), textureInfo.getHeight(), textureInfo.getRegion().x, textureInfo.getRegion().y, textureInfo.getWidth(), textureInfo.getHeight(), textureInfo.getAtlasWidth(), textureInfo.getAtlasHeight());
 
         textureInfo = toDraw.getTextureInfos()[2][1];
-        textureUV = textureInfo.getUV();
-
-        buffer.vertex(matrix, x + toDraw.getTextureInfos()[2][0].getWidth(), y + height, 0.0f).uv(textureUV.getUMin(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width - toDraw.getTextureInfos()[2][2].getWidth(), y + height, 0.0f).uv(textureUV.getUMax(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width - toDraw.getTextureInfos()[2][2].getWidth(), y + height - textureInfo.getHeight(), 0.0f).uv(textureUV.getUMax(), textureUV.getVMin()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + toDraw.getTextureInfos()[2][0].getWidth(), y + height - textureInfo.getHeight(), 0.0f).uv(textureUV.getUMin(), textureUV.getVMin()).color(r, g, b, a).endVertex();
+        guiGraphics.blit(textureInfo.getTexture(), x + toDraw.getTextureInfos()[2][0].getWidth(), y + height - textureInfo.getHeight(), width - toDraw.getTextureInfos()[2][0].getWidth() - toDraw.getTextureInfos()[2][2].getWidth(), textureInfo.getHeight(), textureInfo.getRegion().x, textureInfo.getRegion().y, textureInfo.getWidth(), textureInfo.getHeight(), textureInfo.getAtlasWidth(), textureInfo.getAtlasHeight());
 
         textureInfo = toDraw.getTextureInfos()[1][0];
-        textureUV = textureInfo.getUV();
-
-        buffer.vertex(matrix, x, y + height - toDraw.getTextureInfos()[2][0].getHeight(), 0.0f).uv(textureUV.getUMin(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + textureInfo.getWidth(), y + height - toDraw.getTextureInfos()[2][0].getHeight(), 0.0f).uv(textureUV.getUMax(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + textureInfo.getWidth(), y + toDraw.getTextureInfos()[0][0].getHeight(), 0.0f).uv(textureUV.getUMax(), textureUV.getVMin()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x, y + toDraw.getTextureInfos()[0][0].getHeight(), 0.0f).uv(textureUV.getUMin(), textureUV.getVMin()).color(r, g, b, a).endVertex();
+        guiGraphics.blit(textureInfo.getTexture(), x, y + toDraw.getTextureInfos()[0][0].getHeight(), textureInfo.getWidth(), height - toDraw.getTextureInfos()[0][0].getHeight() - toDraw.getTextureInfos()[2][0].getHeight(), textureInfo.getRegion().x, textureInfo.getRegion().y, textureInfo.getWidth(), textureInfo.getHeight(), textureInfo.getAtlasWidth(), textureInfo.getAtlasHeight());
 
         textureInfo = toDraw.getTextureInfos()[1][2];
-        textureUV = textureInfo.getUV();
-
-        buffer.vertex(matrix, x + width - textureInfo.getWidth(), y + height - toDraw.getTextureInfos()[2][2].getHeight(), 0.0f).uv(textureUV.getUMin(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width, y + height - toDraw.getTextureInfos()[2][2].getHeight(), 0.0f).uv(textureUV.getUMax(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width, y + toDraw.getTextureInfos()[0][2].getHeight(), 0.0f).uv(textureUV.getUMax(), textureUV.getVMin()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width - textureInfo.getWidth(), y + toDraw.getTextureInfos()[0][2].getHeight(), 0.0f).uv(textureUV.getUMin(), textureUV.getVMin()).color(r, g, b, a).endVertex();
+        guiGraphics.blit(textureInfo.getTexture(), x + width - textureInfo.getWidth(), y + toDraw.getTextureInfos()[0][2].getHeight(), textureInfo.getWidth(), height - toDraw.getTextureInfos()[0][2].getHeight() - toDraw.getTextureInfos()[2][2].getHeight(), textureInfo.getRegion().x, textureInfo.getRegion().y, textureInfo.getWidth(), textureInfo.getHeight(), textureInfo.getAtlasWidth(), textureInfo.getAtlasHeight());
 
         textureInfo = toDraw.getTextureInfos()[1][1];
-        textureUV = textureInfo.getUV();
+        guiGraphics.blit(textureInfo.getTexture(), x + toDraw.getTextureInfos()[1][0].getWidth(), y + toDraw.getTextureInfos()[0][1].getHeight(), width - toDraw.getTextureInfos()[1][0].getWidth() - toDraw.getTextureInfos()[1][2].getWidth(), height - toDraw.getTextureInfos()[0][1].getHeight() - toDraw.getTextureInfos()[2][1].getHeight(), textureInfo.getRegion().x, textureInfo.getRegion().y, textureInfo.getWidth(), textureInfo.getHeight(), textureInfo.getAtlasWidth(), textureInfo.getAtlasHeight());
 
-        buffer.vertex(matrix, x + toDraw.getTextureInfos()[1][0].getWidth(), y + height - toDraw.getTextureInfos()[2][1].getHeight(), 0.0f).uv(textureUV.getUMin(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width - toDraw.getTextureInfos()[1][2].getWidth(), y + height - toDraw.getTextureInfos()[2][1].getHeight(), 0.0f).uv(textureUV.getUMax(), textureUV.getVMax()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + width - toDraw.getTextureInfos()[1][2].getWidth(), y + toDraw.getTextureInfos()[0][1].getHeight(), 0.0f).uv(textureUV.getUMax(), textureUV.getVMin()).color(r, g, b, a).endVertex();
-        buffer.vertex(matrix, x + toDraw.getTextureInfos()[1][0].getWidth(), y + toDraw.getTextureInfos()[0][1].getHeight(), 0.0f).uv(textureUV.getUMin(), textureUV.getVMin()).color(r, g, b, a).endVertex();
+        guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-        tesselator.end();
         RenderSystem.disableBlend();
-
     }
 
     public static class NineSliceTexture {

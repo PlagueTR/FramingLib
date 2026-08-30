@@ -3,9 +3,8 @@
   "text.framinglib.cancel_discard": "Discard Changes",
   "text.framinglib.reset_all": "Reset All",
   "text.framinglib.save": "Save",
-  "text.framinglib.layout_element": "%s",
   "text.framinglib.layout_element_reset": "Reset",
-  "text.framinglib.reset_button": "%s Reset Button",
+  "text.framinglib.layout_element_button_narration": "%1$s %2$s button",
   "text.framinglib.demo_config_title": "Layout Config Demo",
   "text.framinglib.demo_element_1": "Demo Element 1",
   "text.framinglib.demo_element_2": "Demo Element 2"

@@ -1,10 +1,9 @@
 package space.plague.framinglib.api.util;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +23,8 @@ public interface TextureInfo {
 
     ResourceLocation getTexture();
 
+    Rectangle getRegion();
+
     int getAtlasWidth();
     int getAtlasHeight();
 
@@ -34,6 +35,6 @@ public interface TextureInfo {
 
     boolean isPixelSolid(int x, int y);
 
-    void render(PoseStack poseStack, int x, int y, Color color);
+    void render(GuiGraphics guiGraphics, int x, int y, Color color);
 
 }

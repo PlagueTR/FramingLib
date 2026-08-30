@@ -1,8 +1,7 @@
 package space.plague.framinglib.gui.elements;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -10,7 +9,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
 
 import space.plague.framinglib.gui.FramingLayoutConfigScreen;
-import space.plague.framinglib.util.ButtonTextureHolder;
+import space.plague.framinglib.util.ButtonTextureHolderImpl;
 import space.plague.framinglib.util.references.TranslationReferences;
 
 import java.util.Optional;
@@ -18,15 +17,15 @@ import java.util.Optional;
 @ApiStatus.Internal
 public class FramingLayoutConfigResetAllButton extends AbstractTextureButtonElement {
 
-    public FramingLayoutConfigResetAllButton(FramingLayoutConfigScreen parent, int x, int y, Component name, ButtonTextureHolder buttonTextureHolder) {
-        super(parent, x, y, name, buttonTextureHolder);
+    public FramingLayoutConfigResetAllButton(FramingLayoutConfigScreen parent, int x, int y, Component name, ButtonTextureHolderImpl buttonTextureHolder) {
+        super(parent, x, y, name, () -> buttonTextureHolder);
         setTooltipSupplier(() -> Optional.of(TranslationReferences.CONFIG_RESET_ALL));
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks){
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks){
         active = screen.isNotDefault();
-        super.render(poseStack, mouseX, mouseY, partialTicks);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     @Override

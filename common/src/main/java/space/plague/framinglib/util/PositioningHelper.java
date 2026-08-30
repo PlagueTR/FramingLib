@@ -11,8 +11,6 @@ import org.jetbrains.annotations.ApiStatus;
 import space.plague.framinglib.api.util.AlignmentSizeOffset;
 import space.plague.framinglib.api.util.Alignments;
 
-import java.util.Objects;
-
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public class PositioningHelper {

@@ -1,18 +1,19 @@
 package space.plague.framinglib.api;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+
 import org.jetbrains.annotations.NotNull;
 
-import space.plague.framinglib.api.util.AlignmentSizeOffset;
-import space.plague.framinglib.api.util.Alignments;
-import space.plague.framinglib.api.util.Color;
-import space.plague.framinglib.api.util.TextureInfo;
+import space.plague.framinglib.api.util.*;
+import space.plague.framinglib.impl.LayoutElementButtonBuilderImpl;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
@@ -35,7 +36,7 @@ public interface LayoutElementBuilder {
 
     LayoutElementBuilder setDoesDrawBackground(boolean doesDrawBackground);
 
-    LayoutElementBuilder setCustomRenderingFunction(BiConsumer<PoseStack, AlignmentSizeOffset> customRenderingFunction);
+    LayoutElementBuilder setCustomRenderingFunction(BiConsumer<GuiGraphics, AlignmentSizeOffset> customRenderingFunction);
 
     LayoutElementBuilder setSnapping(boolean snapping);
 
@@ -44,6 +45,12 @@ public interface LayoutElementBuilder {
     LayoutElementBuilder setButtonsAlignment(Alignments.HAlignment hAlignment, Alignments.VAlignment vAlignment);
 
     LayoutElementBuilder setEnableResetButton(boolean enableResetButton);
+
+    LayoutElementBuilder addLayoutElementButtonEntry(LayoutElementButton buttonEntry);
+
+    default LayoutElementButtonBuilder startLayoutElementButton(Consumer<LayoutElementButton> onPressConsumer, Function<LayoutElementButton, ButtonTextureHolder> buttonTextureProvider, Component name) {
+        return new LayoutElementButtonBuilderImpl(onPressConsumer, buttonTextureProvider, name);
+    }
 
     LayoutElement build();
 
