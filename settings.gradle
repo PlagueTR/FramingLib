@@ -23,7 +23,7 @@ def versionProps = new Properties()
 versionFile.withInputStream { stream -> versionProps.load(stream) }
 
 versionProps.each { key, value ->
-    gradle.ext[key] = value
+    gradle.ext[key as String] = value
 }
 
 def platformsProp = providers.gradleProperty('enabled_platforms').get()

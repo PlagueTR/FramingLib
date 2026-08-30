@@ -24,7 +24,6 @@ import space.plague.framinglib.gui.FramingLayoutConfigScreen;
 import space.plague.framinglib.util.MathUtils;
 import space.plague.framinglib.util.PositioningHelper;
 import space.plague.framinglib.util.references.GraphicsReferences;
-import space.plague.framinglib.util.references.TranslationReferences;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -104,14 +104,14 @@ def convertAW2AT = tasks.register("convertAW2AT") {
             }
 
             if (target == "class") {
-                atLines << "${modifier} ${className}"
+                atLines << ("${modifier} ${className}" as String)
             } else if (target == "field" && parts.length >= 4) {
                 def fieldName = parts[3]
-                atLines << "${modifier} ${className} ${fieldName}"
+                atLines << ("${modifier} ${className} ${fieldName}" as String)
             } else if (target == "method" && parts.length >= 5) {
                 def methodName = parts[3]
                 def methodDescriptor = parts[4]
-                atLines << "${modifier} ${className} ${methodName}${methodDescriptor}"
+                atLines << ("${modifier} ${className} ${methodName}${methodDescriptor}" as String)
             }
         }
 

@@ -24,7 +24,7 @@ apply plugin: 'architectury-plugin'
 
 gradle.ext.properties.each { key, value ->
 	if (key != "properties" && key != "class") {
-		project.ext[key] = value
+		project.ext[key as String] = value
 	}
 }
 

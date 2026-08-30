@@ -174,8 +174,7 @@ public class LayoutElementBuilderImpl implements LayoutElementBuilder {
 
     @Override
     public LayoutElementBuilder addLayoutElementButtonEntry(LayoutElementButton buttonEntry) {
-        if (buttonEntry instanceof GenericLayoutElementTextureButton) {
-            GenericLayoutElementTextureButton lbe = (GenericLayoutElementTextureButton) buttonEntry;
+        if (buttonEntry instanceof GenericLayoutElementTextureButton lbe) {
             this.layoutElementButtons.add(lbe);
         }
         return this;
