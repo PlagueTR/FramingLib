@@ -10,41 +10,40 @@ import org.jetbrains.annotations.ApiStatus;
 
 import space.plague.framinglib.Main;
 import space.plague.framinglib.api.util.Alignments;
+import space.plague.framinglib.api.util.ButtonTextureHolder;
 import space.plague.framinglib.api.util.Color;
 import space.plague.framinglib.api.util.TextureInfo;
-import space.plague.framinglib.util.ButtonTextureHolderImpl;
 import space.plague.framinglib.util.NineSliceButtonTextureHolder;
 
 import java.awt.Rectangle;
 
 @ApiStatus.Internal
 @Environment(EnvType.CLIENT)
-@SuppressWarnings("unused")
 public class GraphicsReferences {
 
     public static final ResourceLocation DEFAULT_BACKGROUND = Screen.BACKGROUND_LOCATION;
 
     public static final ResourceLocation FRAMING_TEXTURE = new ResourceLocation(Main.MOD_ID, "textures/texture.png");
 
-    public static final ButtonTextureHolderImpl ACCEPT_BUTTON_HOLDER = new ButtonTextureHolderImpl(
+    public static final ButtonTextureHolder ACCEPT_BUTTON_HOLDER = ButtonTextureHolder.create(
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(128, 128, 16, 16)),
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(144, 128, 16, 16)),
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(160, 128, 16, 16))
     );
 
-    public static final ButtonTextureHolderImpl DENY_BUTTON_HOLDER = new ButtonTextureHolderImpl(
+    public static final ButtonTextureHolder DENY_BUTTON_HOLDER = ButtonTextureHolder.create(
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(128, 144, 16, 16)),
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(144, 144, 16, 16)),
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(160, 144, 16, 16))
     );
 
-    public static final ButtonTextureHolderImpl RESET_BUTTON_HOLDER = new ButtonTextureHolderImpl(
+    public static final ButtonTextureHolder RESET_BUTTON_HOLDER = ButtonTextureHolder.create(
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(128, 160, 16, 16)),
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(144, 160, 16, 16)),
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(160, 160, 16, 16))
     );
 
-    public static final ButtonTextureHolderImpl BACK_BUTTON_HOLDER = new ButtonTextureHolderImpl(
+    public static final ButtonTextureHolder BACK_BUTTON_HOLDER = ButtonTextureHolder.create(
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(128, 176, 16, 16)),
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(144, 176, 16, 16)),
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(160, 176, 16, 16))
@@ -68,7 +67,7 @@ public class GraphicsReferences {
         )
     );
 
-    public static final ButtonTextureHolderImpl LAYOUT_ELEMENT_RESET_BUTTON_HOLDER = new ButtonTextureHolderImpl(
+    public static final ButtonTextureHolder LAYOUT_ELEMENT_RESET_BUTTON_HOLDER = ButtonTextureHolder.create(
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(128, 0, 8, 8)),
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(136, 0, 8, 8)),
         TextureInfo.create(FRAMING_TEXTURE, new Rectangle(144, 0, 8, 8))

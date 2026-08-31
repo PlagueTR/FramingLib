@@ -1,5 +1,10 @@
 package space.plague.framinglib.api;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+@Environment(EnvType.CLIENT)
+@SuppressWarnings("unused")
 public interface LayoutElementButton {
 
     LayoutElement getLayoutElement();
@@ -8,8 +13,5 @@ public interface LayoutElementButton {
     boolean isEnabled();
 
     boolean isHovered();
-
-    void setCustomData(String key, Object data);
-    Object getCustomData(String key);
 
 }

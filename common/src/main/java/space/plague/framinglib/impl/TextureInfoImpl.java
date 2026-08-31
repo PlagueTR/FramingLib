@@ -3,6 +3,9 @@ package space.plague.framinglib.impl;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +26,7 @@ import java.util.BitSet;
 import java.util.Optional;
 
 @ApiStatus.Internal
+@Environment(EnvType.CLIENT)
 public class TextureInfoImpl implements TextureInfo {
 
     private static final int ALPHA_THRESHOLD = 16;

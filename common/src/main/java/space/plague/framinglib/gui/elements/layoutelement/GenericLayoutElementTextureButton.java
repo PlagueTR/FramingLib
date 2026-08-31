@@ -1,5 +1,8 @@
 package space.plague.framinglib.gui.elements.layoutelement;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -18,20 +21,17 @@ import space.plague.framinglib.util.ButtonTextureHolderImpl;
 import space.plague.framinglib.util.references.GraphicsReferences;
 import space.plague.framinglib.util.references.TranslationReferences;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 @ApiStatus.Internal
+@Environment(EnvType.CLIENT)
 public class GenericLayoutElementTextureButton extends AbstractTextureButtonElement implements LayoutElementButton {
 
     private FramingLayoutElement layoutElement;
     private int offsetX;
     private int offsetY;
-
-    private final Map<String, Object> customData = new HashMap<>();
 
     private final Consumer<LayoutElementButton> onPressConsumer;
 
@@ -47,7 +47,7 @@ public class GenericLayoutElementTextureButton extends AbstractTextureButtonElem
     @Nullable
     private final Function<LayoutElementButton, Optional<Component>> tooltipProvider;
 
-    public GenericLayoutElementTextureButton(Component name, Consumer<LayoutElementButton> onPressConsumer, @NotNull Function<LayoutElementButton, ButtonTextureHolder> buttonTextureHolderProvider, Map<String, Object> customDataOnInit, @Nullable Function<LayoutElementButton, Optional<Component>> tooltipProvider, @Nullable Function<LayoutElementButton, Boolean> enabledProvider) {
+    public GenericLayoutElementTextureButton(Component name, Consumer<LayoutElementButton> onPressConsumer, @NotNull Function<LayoutElementButton, ButtonTextureHolder> buttonTextureHolderProvider, @Nullable Function<LayoutElementButton, Optional<Component>> tooltipProvider, @Nullable Function<LayoutElementButton, Boolean> enabledProvider) {
         super (null, 0,  0, name, () -> null);
 
         this.onPressConsumer = onPressConsumer;
@@ -56,8 +56,6 @@ public class GenericLayoutElementTextureButton extends AbstractTextureButtonElem
 
         this.enabledProvider = enabledProvider;
         this.tooltipProvider = tooltipProvider;
-
-        this.customData.putAll(customDataOnInit);
 
         this.buttonTextureSupplier = () -> {
             ButtonTextureHolder bth = this.buttonTextureHolderProvider.apply(this);
@@ -159,21 +157,6 @@ public class GenericLayoutElementTextureButton extends AbstractTextureButtonElem
     @Override
     public boolean isHovered() {
         return isHovered;
-    }
-
-    @Override
-    public void setCustomData(String key, Object data) {
-        if (data == null) {
-            customData.remove(key);
-        }
-        else {
-            customData.put(key, data);
-        }
-    }
-
-    @Override
-    public Object getCustomData(String key) {
-        return customData.getOrDefault(key, null);
     }
 
 }

@@ -1,5 +1,8 @@
 package space.plague.framinglib.gui.elements;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -8,6 +11,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import org.lwjgl.glfw.GLFW;
 
+import space.plague.framinglib.api.util.ButtonTextureHolder;
 import space.plague.framinglib.gui.FramingLayoutConfigScreen;
 import space.plague.framinglib.util.ButtonTextureHolderImpl;
 import space.plague.framinglib.util.references.TranslationReferences;
@@ -15,10 +19,11 @@ import space.plague.framinglib.util.references.TranslationReferences;
 import java.util.Optional;
 
 @ApiStatus.Internal
+@Environment(EnvType.CLIENT)
 public class FramingLayoutConfigResetAllButton extends AbstractTextureButtonElement {
 
-    public FramingLayoutConfigResetAllButton(FramingLayoutConfigScreen parent, int x, int y, Component name, ButtonTextureHolderImpl buttonTextureHolder) {
-        super(parent, x, y, name, () -> buttonTextureHolder);
+    public FramingLayoutConfigResetAllButton(FramingLayoutConfigScreen parent, int x, int y, Component name, ButtonTextureHolder buttonTextureHolder) {
+        super(parent, x, y, name, () -> buttonTextureHolder instanceof ButtonTextureHolderImpl ? (ButtonTextureHolderImpl) buttonTextureHolder : null);
         setTooltipSupplier(() -> Optional.of(TranslationReferences.CONFIG_RESET_ALL));
     }
 

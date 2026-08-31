@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import space.plague.framinglib.api.LayoutConfigScreen;
 import space.plague.framinglib.api.util.ButtonState;
+import space.plague.framinglib.api.util.ButtonTextureHolder;
 import space.plague.framinglib.api.util.Color;
 import space.plague.framinglib.gui.FramingLayoutConfigScreen;
 import space.plague.framinglib.util.ButtonTextureHolderImpl;
@@ -40,7 +41,6 @@ public abstract class AbstractTextureButtonElement extends AbstractButton {
             buttonTextureSupplier.get() != null ? buttonTextureSupplier.get().getDisabledTextureInfo().getHeight() : 0,
             name);
         this.screen = parent;
-        this.buttonTextureSupplier = buttonTextureSupplier;
         this.color = Color.create(255, 255, 255);
     }
 
