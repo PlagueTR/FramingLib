@@ -29,7 +29,7 @@ Declare the values you want to store as instance fields. You must provide the fi
 ```java title="java"
 public class ModConfig {
     // The alignment size offset object we will store in our config
-    private AlignmentSizeOffset layoutAlignmentSizeOffset;
+    private final AlignmentSizeOffset layoutAlignmentSizeOffset;
 
     // Default constructor to initialize our config with default values
     public ModConfig() {

@@ -10,7 +10,6 @@ import org.jetbrains.annotations.ApiStatus;
 
 import space.plague.framinglib.api.util.ButtonTextureHolder;
 import space.plague.framinglib.gui.FramingLayoutConfigScreen;
-import space.plague.framinglib.util.ButtonTextureHolderImpl;
 import space.plague.framinglib.util.references.TranslationReferences;
 
 import java.util.Optional;
@@ -20,7 +19,7 @@ import java.util.Optional;
 public class FramingLayoutConfigSaveButton extends AbstractTextureButtonElement {
 
     public FramingLayoutConfigSaveButton(FramingLayoutConfigScreen parent, int x, int y, Component name, ButtonTextureHolder buttonTextureHolder) {
-        super(parent, x, y, name, () -> buttonTextureHolder instanceof ButtonTextureHolderImpl ? (ButtonTextureHolderImpl) buttonTextureHolder : null);
+        super(parent, x, y, name, () -> buttonTextureHolder);
         setTooltipSupplier(() -> Optional.of(TranslationReferences.CONFIG_SAVE));
     }
 

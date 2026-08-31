@@ -28,19 +28,20 @@ public abstract class AbstractTextureButtonElement extends AbstractButton {
 
     protected LayoutConfigScreen screen;
 
-    protected Supplier<ButtonTextureHolderImpl> buttonTextureSupplier;
+    protected Supplier<ButtonTextureHolder> buttonTextureSupplier;
 
     @Nullable
     protected Supplier<Optional<Component>> tooltipSupplier;
 
     private Color color;
 
-    public AbstractTextureButtonElement(FramingLayoutConfigScreen parent, int x, int y, Component name, Supplier<ButtonTextureHolderImpl> buttonTextureSupplier) {
+    public AbstractTextureButtonElement(FramingLayoutConfigScreen parent, int x, int y, Component name, Supplier<ButtonTextureHolder> buttonTextureSupplier) {
         super(x, y,
             buttonTextureSupplier.get() != null ? buttonTextureSupplier.get().getDisabledTextureInfo().getWidth() : 0,
             buttonTextureSupplier.get() != null ? buttonTextureSupplier.get().getDisabledTextureInfo().getHeight() : 0,
             name);
         this.screen = parent;
+        this.buttonTextureSupplier = buttonTextureSupplier;
         this.color = Color.create(255, 255, 255);
     }
 
@@ -85,14 +86,20 @@ public abstract class AbstractTextureButtonElement extends AbstractButton {
     }
 
     public void renderTextureButton(GuiGraphics guiGraphics) {
-        if (!this.active) {
-            buttonTextureSupplier.get().render(guiGraphics, this.getX(), this.getY(), ButtonState.DISABLED, color);
+        ButtonState state = ButtonState.DISABLED;
+
+        if (this.active) {
+            if (this.isHovered){
+                state = ButtonState.HOVERED;
+            }
+            else {
+                state = ButtonState.ACTIVE;
+            }
         }
-        else if (this.isHovered) {
-            buttonTextureSupplier.get().render(guiGraphics, this.getX(), this.getY(), ButtonState.HOVERED, color);
-        }
-        else {
-            buttonTextureSupplier.get().render(guiGraphics, this.getX(), this.getY(), ButtonState.ACTIVE, color);
+
+        ButtonTextureHolder buttonTextureHolder = buttonTextureSupplier.get();
+        if (buttonTextureHolder instanceof ButtonTextureHolderImpl) {
+            ((ButtonTextureHolderImpl) buttonTextureHolder).render(guiGraphics, this.getX(), this.getY(), state, color);
         }
     }
 
